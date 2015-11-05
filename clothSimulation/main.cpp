@@ -10,11 +10,14 @@
 #include "Shader.h"
 #include "FindClosestNeighbor.h"
 
+#include "Helper.h"
+
 using namespace glm;
 
 //-----------------------
 // function declarations 
 //-----------------------
+void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vector<glm::vec3> &velocity, vector<glm::vec3> &velocity_old, vector<int> staticParticles, GLuint EulerShader, FBOstruct *fbo1, FBOstruct *fbo2, int W, int H);
 static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mods);
 static void error_callback (int error, const char* description);
 void drawTriangles(vector<glm::vec3> particles, Shader phongShader);
@@ -64,6 +67,13 @@ int main(void) {
 	GLint attribute_coord3d;
 
 	Shader phongShader;
+	/*****************************
+	 * Declare the GPGPU Shader  *
+	 *****************************/
+	GLuint EulerShader;
+	FBOstruct *fbo1, *fbo2;
+	const int W = 16, H = 16;
+
 
 	glfwSetErrorCallback(error_callback);
 
@@ -107,6 +117,14 @@ int main(void) {
 	//create shader
 	phongShader.createShader("Shaders/vertexShader.glsl", "Shaders/fragmentShader.glsl");
 
+	/****************************
+	 * Create the GPGPU Shader  *
+	 ****************************/
+	EulerShader = loadShaders("Shaders/eulerVertexShader.glsl", "Shaders/eulerFragmentShader.glsl");
+	
+	fbo1 = initFBO(W, H, 0);
+	fbo2 = initFBO(W, H, 0);
+
 	glEnable(GL_DEPTH_TEST);
 
 	attribute_coord3d = glGetAttribLocation(phongShader.programID, "coord3d");
@@ -144,6 +162,7 @@ int main(void) {
 
 		//draw here
 		drawTriangles(particles, phongShader);
+		calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fbo1, fbo2, W, H);
 		for (int skipp = 0; skipp < 12; skipp++){// to enhance preformanse since movment in one timestep is so smale that we dont need to draw every timestep.
 			Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position
 		}
@@ -157,6 +176,40 @@ int main(void) {
 
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
+}
+
+
+void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vector<glm::vec3> &velocity, vector<glm::vec3> &velocity_old, vector<int> staticParticles, GLuint EulerShader, FBOstruct *fbo_1, FBOstruct *fbo_2, int W, int H)
+{
+	GLfloat square[] = { -1, -1, 0,
+		-1, 1, 0,
+		1, 1, 0,
+		1, -1, 0 };
+
+	GLfloat squareTexCoord[] = { 0, 0,
+		0, 1,
+		1, 1,
+		1, 0 };
+
+	GLuint squareIndices[] = { 0, 1, 2, 0, 2, 3 };
+	/*************************
+	* Use the GPGPU Shader  *
+	*************************/
+	Model* squareModel = LoadDataToModel(
+		square, NULL, squareTexCoord, NULL,
+		squareIndices, 4, 6);
+
+	useFBO(fbo_1, 0L, 0L);
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Activate shader program
+	glUseProgram(EulerShader);
+
+	DrawModel(squareModel, EulerShader, "in_Position", NULL, "in_TexCoord");
+	
+
+	useFBO(0L, 0L, 0L);
 }
 
 static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mods) {
