@@ -180,9 +180,58 @@ int main(void) {
 	exit(EXIT_SUCCESS);
 }
 
-
+/*************************
+* Use the GPGPU Shader  *
+*************************/
 void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vector<glm::vec3> &velocity, vector<glm::vec3> &velocity_old, vector<int> staticParticles, GLuint EulerShader, FBOstruct *fbo_1, FBOstruct *fbo_2, int W, int H)
 {
+	/* Black/white checkerboard
+	float pixels[] = {
+		0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f
+	};
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);*/
+	
+	// Particle texture(Array)
+	const size_t size = nrOfParticlesVertically*nrOfParticlesHorizontally * 3;//particle.size() * 3;
+	float particlePixels[size];
+	for (int i = 0, j = 0; i < particle.size(); i++, j+=3)
+	{
+		particlePixels[j] = particle.at(i).x;
+		particlePixels[j+1] = particle.at(i).y;
+		particlePixels[j+2] = particle.at(i).z;
+	};
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, 0, GL_RGB, GL_FLOAT, particlePixels);
+	
+	float oldParticlePixels[size];
+	for (int i = 0, j = 0; i < particle_old.size(); i++, j += 3)
+	{
+		particlePixels[j] = particle_old.at(i).x;
+		particlePixels[j + 1] = particle_old.at(i).y;
+		particlePixels[j + 2] = particle_old.at(i).z;
+	};
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, 0, GL_RGB, GL_FLOAT, oldParticlePixels);
+
+	// Velosity texture(Array)
+	float velocityPixels[size];
+	for (int i = 0, j = 0; i < velocity.size(); i++, j += 3)
+	{
+		particlePixels[j] = velocity.at(i).x;
+		particlePixels[j + 1] = velocity.at(i).y;
+		particlePixels[j + 2] = velocity.at(i).z;
+	};
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, 0, GL_RGB, GL_FLOAT, velocityPixels);
+	
+	// Velosity texture(Array)
+	float oldVelocityPixels[size];
+	for (int i = 0, j = 0; i < velocity_old.size(); i++, j += 3)
+	{
+		particlePixels[j] = velocity_old.at(i).x;
+		particlePixels[j + 1] = velocity_old.at(i).y;
+		particlePixels[j + 2] = velocity_old.at(i).z;
+	};
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, 0, GL_RGB, GL_FLOAT, oldVelocityPixels);
+
 	GLfloat square[] = { -1, -1, 0,
 		-1, 1, 0,
 		1, 1, 0,
@@ -194,9 +243,8 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 		1, 0 };
 
 	GLuint squareIndices[] = { 0, 1, 2, 0, 2, 3 };
-	/*************************
-	* Use the GPGPU Shader  *
-	*************************/
+
+
 	Model* squareModel = LoadDataToModel(
 		square, NULL, squareTexCoord, NULL,
 		squareIndices, 4, 6);
