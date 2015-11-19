@@ -24,6 +24,7 @@ typedef struct
 } FBOstruct;
 
 FBOstruct *initFBO(int width, int height, int int_method);
+FBOstruct *initFBO(int width, int height, int int_method, float* textureArray);
 void useFBO(FBOstruct *out, FBOstruct *in1, FBOstruct *in2);
 
 

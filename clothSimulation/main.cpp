@@ -10,7 +10,8 @@
 #include "Shader.h"
 #include "FindClosestNeighbor.h"
 
-#include "Helper.h"
+
+#include "gpgpu.cpp"
 
 using namespace glm;
 
@@ -72,8 +73,8 @@ int main(void) {
 	 *****************************/
 	GLuint EulerShader;
 	GLuint RenderShader;
-	FBOstruct *fbo1, *fbo2;
-	const int W = 16, H = 16;
+	FBOstruct *fboPos1, *fboPos2, *fboVel1, *fboVel2;
+	//const int W = 16, H = 16;
 
 
 	glfwSetErrorCallback(error_callback);
@@ -123,9 +124,56 @@ int main(void) {
 	 ****************************/
 	EulerShader = loadShaders("Shaders/eulerVertexShader.glsl", "Shaders/eulerFragmentShader.glsl");
 	RenderShader = loadShaders("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
-	
-	fbo1 = initFBO(W, H, 0);
-	fbo2 = initFBO(W, H, 0);
+
+	// Particle texture(Array)
+	const size_t size = nrOfParticlesVertically*nrOfParticlesHorizontally * 3;//particle.size() * 3;
+	float particlePixels[size];
+	float oldParticlePixels[size];
+	float velocityPixels[size];
+	float oldVelocityPixels[size];
+	for (int i = 0, j = 0; i < particles.size(); i++, j += 3)
+	{
+		/*particlePixels[j] = particles.at(i).x;
+		particlePixels[j + 1] = particles.at(i).y;
+		particlePixels[j + 2] = particles.at(i).z;
+
+		oldParticlePixels[j] = particle_old.at(i).x;
+		oldParticlePixels[j + 1] = particle_old.at(i).y;
+		oldParticlePixels[j + 2] = particle_old.at(i).z;
+
+		velocityPixels[j] = velocity.at(i).x;
+		velocityPixels[j + 1] = velocity.at(i).y;
+		velocityPixels[j + 2] = velocity.at(i).z;
+
+		oldVelocityPixels[j] = velocity_old.at(i).x;
+		oldVelocityPixels[j + 1] = velocity_old.at(i).y;
+		oldVelocityPixels[j + 2] = velocity_old.at(i).z;*/
+		particlePixels[j] = 3;
+		particlePixels[j + 1] = 3;
+		particlePixels[j + 2] = 3;
+
+		oldParticlePixels[j] = 4;
+		oldParticlePixels[j + 1] = 4;
+		oldParticlePixels[j + 2] = 4;
+
+		velocityPixels[j] = 5;
+		velocityPixels[j + 1] = 5;
+		velocityPixels[j + 2] = 5;
+
+		oldVelocityPixels[j] = 7;
+		oldVelocityPixels[j + 1] = 7;
+		oldVelocityPixels[j + 2] = 7;
+	};
+	fboPos1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, particlePixels);
+	fboPos2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldParticlePixels);
+	fboVel1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, velocityPixels);
+	fboVel2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldVelocityPixels);
+
+	//initGPGPU(particles, particle_old, velocity, velocity_old, fboPos1, fboPos2, fboVel1, fboVel2);
+	/*fboPos1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);
+	fboPos2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);
+	fboVel1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);
+	fboVel2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);*/
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -166,7 +214,7 @@ int main(void) {
 		drawTriangles(particles, phongShader, RenderShader);
 		for (int skipp = 0; skipp < 12; skipp++){// to enhance preformanse since movment in one timestep is so smale that we dont need to draw every timestep.
 			Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position
-			calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fbo1, fbo2, W, H);
+			calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos1, fboPos2, fboVel1, fboVel2);
 		}
 
 		// Swap buffers
@@ -180,86 +228,8 @@ int main(void) {
 	exit(EXIT_SUCCESS);
 }
 
-/*************************
-* Use the GPGPU Shader  *
-*************************/
-void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vector<glm::vec3> &velocity, vector<glm::vec3> &velocity_old, vector<int> staticParticles, GLuint EulerShader, FBOstruct *fbo_1, FBOstruct *fbo_2, int W, int H)
-{
-	/* Black/white checkerboard
-	float pixels[] = {
-		0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f
-	};
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);*/
-	
-	// Particle texture(Array)
-	const size_t size = nrOfParticlesVertically*nrOfParticlesHorizontally * 3;//particle.size() * 3;
-	float particlePixels[size];
-	for (int i = 0, j = 0; i < particle.size(); i++, j+=3)
-	{
-		particlePixels[j] = particle.at(i).x;
-		particlePixels[j+1] = particle.at(i).y;
-		particlePixels[j+2] = particle.at(i).z;
-	};
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, 0, GL_RGB, GL_FLOAT, particlePixels);
-	
-	float oldParticlePixels[size];
-	for (int i = 0, j = 0; i < particle_old.size(); i++, j += 3)
-	{
-		particlePixels[j] = particle_old.at(i).x;
-		particlePixels[j + 1] = particle_old.at(i).y;
-		particlePixels[j + 2] = particle_old.at(i).z;
-	};
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, 0, GL_RGB, GL_FLOAT, oldParticlePixels);
-
-	// Velosity texture(Array)
-	float velocityPixels[size];
-	for (int i = 0, j = 0; i < velocity.size(); i++, j += 3)
-	{
-		particlePixels[j] = velocity.at(i).x;
-		particlePixels[j + 1] = velocity.at(i).y;
-		particlePixels[j + 2] = velocity.at(i).z;
-	};
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, 0, GL_RGB, GL_FLOAT, velocityPixels);
-	
-	// Velosity texture(Array)
-	float oldVelocityPixels[size];
-	for (int i = 0, j = 0; i < velocity_old.size(); i++, j += 3)
-	{
-		particlePixels[j] = velocity_old.at(i).x;
-		particlePixels[j + 1] = velocity_old.at(i).y;
-		particlePixels[j + 2] = velocity_old.at(i).z;
-	};
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, 0, GL_RGB, GL_FLOAT, oldVelocityPixels);
-
-	GLfloat square[] = { -1, -1, 0,
-		-1, 1, 0,
-		1, 1, 0,
-		1, -1, 0 };
-
-	GLfloat squareTexCoord[] = { 0, 0,
-		0, 1,
-		1, 1,
-		1, 0 };
-
-	GLuint squareIndices[] = { 0, 1, 2, 0, 2, 3 };
 
 
-	Model* squareModel = LoadDataToModel(
-		square, NULL, squareTexCoord, NULL,
-		squareIndices, 4, 6);
-
-	useFBO(fbo_1, 0L, 0L);
-	glClearColor(0.0, 0.0, 0.0, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Activate shader program
-	glUseProgram(EulerShader);
-
-	DrawModel(squareModel, EulerShader, "in_Position", NULL, "in_TexCoord");
-	
-
-}
 
 static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mods) {
 	// Close window if ESC is pressed
