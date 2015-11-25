@@ -20,14 +20,15 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 		squareIndices, 4, 6);
 
 	//useFBO(fboVel, fboOldVel, fboOldPos);
-	useFBO(fboVel, 0L, 0L);
+	useFBO(fboVel, 0L, fboPos);
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Activate shader program
 	glUseProgram(EulerShader);
-
-	//DrawModel(squareModel, EulerShader, "in_Position", NULL, "in_TexCoord");
+	cout << "here0 \n";
+	DrawModel(squareModel, EulerShader, "in_Position", NULL, "in_TexCoord");
+	cout << "here1 \n";
 
 	/*  glReadPixels(GLint  x, GLint  y, GLsizei  width, GLsizei  height, GLenum  format, GLenum  type, GLvoid *  data);
 		x, y : Specify the window coordinates of the first pixel that is read from the frame buffer. This location is the lower left corner of a rectangular block of pixels.
@@ -36,27 +37,32 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 		type : Specifies the data type of the pixel data. Must be one of GL_UNSIGNED_BYTE,GL_BYTE,GL_BITMAP,GL_UNSIGNED_SHORT,GL_SHORT,GL_UNSIGNED_INT,GL_INT,GL_FLOAT,GL_UNSIGNED_BYTE_3_3_2,GL_UNSIGNED_BYTE_2_3_3_REV,GL_UNSIGNED_SHORT_5_6_5,GL_UNSIGNED_SHORT_5_6_5_REV,GL_UNSIGNED_SHORT_4_4_4_4,GL_UNSIGNED_SHORT_4_4_4_4_REV,GL_UNSIGNED_SHORT_5_5_5_1,GL_UNSIGNED_SHORT_1_5_5_5_REV,GL_UNSIGNED_INT_8_8_8_8,GL_UNSIGNED_INT_8_8_8_8_REV,GL_UNSIGNED_INT_10_10_10_2, or GL_UNSIGNED_INT_2_10_10_10_REV.
 		data : Returns the pixel data.
 	*/
-	const size_t size = nrOfParticlesVertically*nrOfParticlesHorizontally * 3;//particle.size() * 3;
-	float particlePixels[size];
-	for (int i = 0, j = 0; i < particle.size(); i++, j += 3)
+	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
+	float particlePixels[SIZE];
+	for (unsigned int i = 0, j = 0; i < particle.size() && j < SIZE; i++, j += 4)
 	{
 		/*particlePixels[j] = particle.at(i).x;
 		particlePixels[j + 1] = particle.at(i).y;
 		particlePixels[j + 2] = particle.at(i).z;*/
 		particlePixels[j] = 2;
 		particlePixels[j + 1] = 2;
-		particlePixels[j + 2] =2;
+		particlePixels[j + 2] = 2;
+		particlePixels[j + 3] = 2;
 	};
-	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGB, GL_FLOAT, particlePixels);
-	for (int i = 0, j = 0; i < particle.size(); i++, j += 3)
+	cout << "innan: " << particlePixels[10];
+
+	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+
+	cout << " efter: " << particlePixels[10]<< endl;
+	/*for (int i = 0, j = 0; i < particle.size(); i++, j += 3)
 	{
 		cout << particlePixels[j];
 		cout << particlePixels[j + 1];
 		cout << particlePixels[j + 2];
-		/*particle.at(i).x = particlePixels[j];
-		particle.at(i).y = particlePixels[j + 1];
-		particle.at(i).z = particlePixels[j + 2];*/
-	};
+		//particle.at(i).x = particlePixels[j];
+		//particle.at(i).y = particlePixels[j + 1];
+		//particle.at(i).z = particlePixels[j + 2];
+	};*/
 }
 
 void initGPGPU(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vector<glm::vec3> &velocity, vector<glm::vec3> &velocity_old, FBOstruct *fboPos1, FBOstruct *fboPos2, FBOstruct *fboVel1, FBOstruct *fboVel2)
@@ -68,7 +74,7 @@ void initGPGPU(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vec
 	0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 	1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f
 	};
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);*/
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels); *
 
 	// Particle texture(Array)
 	const size_t size = nrOfParticlesVertically*nrOfParticlesHorizontally * 3;//particle.size() * 3;
@@ -114,6 +120,7 @@ void initGPGPU(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vec
 	fboPos2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldParticlePixels);
 	fboVel1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, velocityPixels);
 	fboVel2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldVelocityPixels);
+	*/
 }
 
 /*

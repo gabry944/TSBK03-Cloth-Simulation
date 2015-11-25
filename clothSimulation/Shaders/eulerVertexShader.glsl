@@ -1,19 +1,15 @@
-# version 150
+#version 150
 
-attribute vec3 coord3d;
-attribute vec3 v_color;
-varying vec3 f_color; // for sending color from vertexshader to fragmentshader
-uniform mat4 mvp; //  global transformation matrix
+in vec3 in_Position;
+in vec2 in_TexCoord;
+
+out vec3 Position;
+out vec2 texCoord;
 
 void main(void) {
+    Position = in_Position;
+    texCoord = in_TexCoord;
 
-	// Phong
-	//exNormal = inverse(transpose(mat3(modelviewMatrix))) * in_Normal; // Phong, "fake" normal transformation
-	//exSurface = vec3(modelviewMatrix * vec4(in_Position, 1.0)); // Don't include projection here - we only want to go to view coordinates
-	//gl_Position = projectionMatrix * modelviewMatrix * vec4(in_Position, 1.0); // This should include projection
-
-
-	// Synligt
-	gl_Position = mvp * vec4(coord3d, 1.0);
-	f_color = v_color; // send the color to the fragmentshader
+    gl_Position = vec4(Position, 1.0f);
+	
 }

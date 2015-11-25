@@ -126,12 +126,12 @@ int main(void) {
 	RenderShader = loadShaders("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
 
 	// Particle texture(Array)
-	const size_t size = nrOfParticlesVertically*nrOfParticlesHorizontally * 3;//particle.size() * 3;
-	float particlePixels[size];
-	float oldParticlePixels[size];
-	float velocityPixels[size];
-	float oldVelocityPixels[size];
-	for (int i = 0, j = 0; i < particles.size(); i++, j += 3)
+	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;//particle.SIZE() * 3;
+	float particlePixels[SIZE];
+	float oldParticlePixels[SIZE];
+	float velocityPixels[SIZE];
+	float oldVelocityPixels[SIZE];
+	for (int i = 0, j = 0; i < particles.size() && j < SIZE; i++, j += 4)
 	{
 		/*particlePixels[j] = particles.at(i).x;
 		particlePixels[j + 1] = particles.at(i).y;
@@ -151,18 +151,23 @@ int main(void) {
 		particlePixels[j] = 3;
 		particlePixels[j + 1] = 3;
 		particlePixels[j + 2] = 3;
+		particlePixels[j + 3] = 3;
 
 		oldParticlePixels[j] = 4;
 		oldParticlePixels[j + 1] = 4;
 		oldParticlePixels[j + 2] = 4;
+		oldParticlePixels[j + 3] = 4;
+
 
 		velocityPixels[j] = 5;
 		velocityPixels[j + 1] = 5;
 		velocityPixels[j + 2] = 5;
+		velocityPixels[j + 3] = 5;
 
 		oldVelocityPixels[j] = 7;
 		oldVelocityPixels[j + 1] = 7;
 		oldVelocityPixels[j + 2] = 7;
+		oldVelocityPixels[j + 3] = 7;
 	};
 	fboPos1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, particlePixels);
 	fboPos2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldParticlePixels);
@@ -195,6 +200,8 @@ int main(void) {
 		return 0;
 	}
 
+	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos1, fboPos2, fboVel1, fboVel2);
+
 	// run untill window should close
 	while (!glfwWindowShouldClose(window)) {
 
@@ -214,7 +221,7 @@ int main(void) {
 		drawTriangles(particles, phongShader, RenderShader);
 		for (int skipp = 0; skipp < 12; skipp++){// to enhance preformanse since movment in one timestep is so smale that we dont need to draw every timestep.
 			Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position
-			calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos1, fboPos2, fboVel1, fboVel2);
+			//calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos1, fboPos2, fboVel1, fboVel2);
 		}
 
 		// Swap buffers

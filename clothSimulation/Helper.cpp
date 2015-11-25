@@ -254,8 +254,8 @@ FBOstruct *initFBO(int width, int height, int int_method, float* textureArray)
 {
 	FBOstruct *fbo = (FBOstruct*)malloc(sizeof(FBOstruct));
 
-	fbo->width = width;
-	fbo->height = height;
+	fbo->width = width * height;
+	fbo->height = 1;
 
 	// create objects
 	glGenFramebuffers(1, &fbo->fb); // frame buffer id
@@ -277,7 +277,8 @@ FBOstruct *initFBO(int width, int height, int int_method, float* textureArray)
 	}
 	
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width * height, 1, 0, GL_RGB, GL_FLOAT, textureArray);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width * height, 1, 0, GL_RGBA, GL_FLOAT, textureArray);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width * height, 1, 0, GL_RGB, GL_FLOAT, textureArray);
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo->texid, 0);
 
