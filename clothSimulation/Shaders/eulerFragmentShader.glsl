@@ -11,14 +11,14 @@ void main(void) {
   
   vec2 cord = texCoord;
   vec4 c = texture(tex, cord);
-  /*c.r = 1337;
+  c.r = 1337;
   c.g = 1337;
-  c.b = 1337;*/
-  //Out_Color = c;
+  c.b = -1337;
+  Out_Color = c;
 
   
-  float value = clamp(texture(tex, texCoord).r, 1.0, 10.0);
-  Out_Color = vec4(value, value, value, 1.0);
+  //float value = clamp(texture(tex, texCoord).r, 1.0, 10.0);
+  //Out_Color = vec4(value, value, value, 1.0);
 
 
 /*

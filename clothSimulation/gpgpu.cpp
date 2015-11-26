@@ -26,9 +26,7 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 
 	// Activate shader program
 	glUseProgram(EulerShader);
-	cout << "here0 \n";
 	DrawModel(squareModel, EulerShader, "in_Position", NULL, "in_TexCoord");
-	cout << "here1 \n";
 
 	/*  glReadPixels(GLint  x, GLint  y, GLsizei  width, GLsizei  height, GLenum  format, GLenum  type, GLvoid *  data);
 		x, y : Specify the window coordinates of the first pixel that is read from the frame buffer. This location is the lower left corner of a rectangular block of pixels.
@@ -39,34 +37,96 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	*/
 	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
 	float particlePixels[SIZE];
-	for (unsigned int i = 0, j = 0; i < particle.size() && j < SIZE; i++, j += 4)
+	/*for (unsigned int i = 0, j = 0; i < particle.size() && j < SIZE; i++, j += 4)
 	{
 		/*particlePixels[j] = particle.at(i).x;
 		particlePixels[j + 1] = particle.at(i).y;
-		particlePixels[j + 2] = particle.at(i).z;*/
+		particlePixels[j + 2] = particle.at(i).z;*
 		particlePixels[j] = 2;
 		particlePixels[j + 1] = 2;
 		particlePixels[j + 2] = 2;
 		particlePixels[j + 3] = 2;
-	};
-	cout << "innan: " << particlePixels[10];
-
+	};*/
+	//cout << "innan: " << particlePixels[0] << " " << particlePixels[1] << " " << particlePixels[2] << " " << particlePixels[3] << " " << particlePixels[4] << endl;
 	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	cout << " efter: " << particlePixels[0] << " " << particlePixels[1] << " " << particlePixels[2] << " " << particlePixels[3] << " " << particlePixels[4] << endl;
 
-	cout << " efter: " << particlePixels[10]<< endl;
-	/*for (int i = 0, j = 0; i < particle.size(); i++, j += 3)
+
+	
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST); 
+	GLuint pass = loadShaders("Shaders/passVertexShader.glsl", "Shaders/passFragmentShader.glsl");
+	useFBO(fboOldVel, fboVel, 0L);
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(pass);
+	DrawModel(squareModel, pass, "in_Position", NULL, "in_TexCoord");
+	cout << "nästa Pass, innan: " << particlePixels[0] << " " << particlePixels[1] << " " << particlePixels[2] << " " << particlePixels[3] << " " << particlePixels[4] << endl;
+	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	cout << " efter: " << particlePixels[0] << " " << particlePixels[1] << " " << particlePixels[2] << " " << particlePixels[3] << " " << particlePixels[4] << endl;
+
+
+
+
+	/*for (int i = 0, j = 0; i < particle.size(); i++, j += 4)
 	{
-		cout << particlePixels[j];
+		/*cout << particlePixels[j];
 		cout << particlePixels[j + 1];
-		cout << particlePixels[j + 2];
-		//particle.at(i).x = particlePixels[j];
-		//particle.at(i).y = particlePixels[j + 1];
-		//particle.at(i).z = particlePixels[j + 2];
+		cout << particlePixels[j + 2];*
+		particle.at(i).x = particlePixels[j];
+		particle.at(i).y = particlePixels[j + 1];
+		particle.at(i).z = particlePixels[j + 2];
 	};*/
 }
 
-void initGPGPU(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vector<glm::vec3> &velocity, vector<glm::vec3> &velocity_old, FBOstruct *fboPos1, FBOstruct *fboPos2, FBOstruct *fboVel1, FBOstruct *fboVel2)
+void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOstruct *fboOldVel)
 {
+	// en enkel fyrkant att rita på
+	GLfloat square[] = {-1, -1, 0,
+						-1,  1, 0,
+						 1,  1, 0,
+						 1, -1, 0 };
+	GLfloat squareTexCoord[] = {0, 0,
+								0, 1,
+								1, 1,
+								1, 0 };
+	GLuint squareIndices[] = { 0, 1, 2, 0, 2, 3 };
+	Model* squareModel = LoadDataToModel(square, NULL, squareTexCoord, NULL,squareIndices, 4, 6);
+	
+	//Create initial textures on the FBOs;
+	GLuint initVelosity = loadShaders("Shaders/initVelosityVertexShader.glsl", "Shaders/initVelosityFragmentShader.glsl");
+	useFBO(fboVel, 0L, 0L);
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(initVelosity);
+	DrawModel(squareModel, initVelosity, "in_Position", NULL, NULL);
+	
+	useFBO(fboOldVel, 0L, 0L);
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	DrawModel(squareModel, initVelosity, "in_Position", NULL, NULL);
+
+	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
+	float particlePixels[SIZE];
+	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	cout << " Init velosity: " << particlePixels[0] << " " << particlePixels[1] << " " << particlePixels[2] << " " << particlePixels[3] << " " << particlePixels[4] << endl;
+
+	/*GLuint initPosition = loadShaders("Shaders/initPositionVertexShader.glsl", "Shaders/initPositionFragmentShader.glsl");
+	useFBO(fboPos, 0L, 0L);
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(initPosition);
+	DrawModel(squareModel, initVelosity, "in_Position", NULL, "in_TexCoord");
+
+	useFBO(fboOldPos, 0L, 0L);
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	DrawModel(squareModel, initVelosity, "in_Position", NULL, "in_TexCoord"); */
+}
+
+//gammla sättet med att försöka på på en färdigskapad texture
+//void initGPGPU(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vector<glm::vec3> &velocity, vector<glm::vec3> &velocity_old, FBOstruct *fboPos1, FBOstruct *fboPos2, FBOstruct *fboVel1, FBOstruct *fboVel2)
+//{
 	//Create initial textures of the array
 
 	/* Black/white checkerboard
@@ -121,7 +181,7 @@ void initGPGPU(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vec
 	fboVel1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, velocityPixels);
 	fboVel2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldVelocityPixels);
 	*/
-}
+//}
 
 /*
 void framebufferFunction()

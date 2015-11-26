@@ -73,7 +73,7 @@ int main(void) {
 	 *****************************/
 	GLuint EulerShader;
 	GLuint RenderShader;
-	FBOstruct *fboPos1, *fboPos2, *fboVel1, *fboVel2;
+	FBOstruct *fboPos, *fboOldPos, *fboVel, *fboOldVel;
 	//const int W = 16, H = 16;
 
 
@@ -169,10 +169,12 @@ int main(void) {
 		oldVelocityPixels[j + 2] = 7;
 		oldVelocityPixels[j + 3] = 7;
 	};
-	fboPos1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, particlePixels);
-	fboPos2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldParticlePixels);
-	fboVel1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, velocityPixels);
-	fboVel2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldVelocityPixels);
+	fboPos = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, particlePixels);
+	fboOldPos = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldParticlePixels);
+	fboVel = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, velocityPixels);
+	fboOldVel = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldVelocityPixels);
+
+	initGPGPU(fboPos, fboOldPos, fboVel, fboOldVel);
 
 	//initGPGPU(particles, particle_old, velocity, velocity_old, fboPos1, fboPos2, fboVel1, fboVel2);
 	/*fboPos1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);
@@ -200,7 +202,7 @@ int main(void) {
 		return 0;
 	}
 
-	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos1, fboPos2, fboVel1, fboVel2);
+	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
 
 	// run untill window should close
 	while (!glfwWindowShouldClose(window)) {
