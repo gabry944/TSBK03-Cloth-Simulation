@@ -92,6 +92,26 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 								1, 0 };
 	GLuint squareIndices[] = { 0, 1, 2, 0, 2, 3 };
 	Model* squareModel = LoadDataToModel(square, NULL, squareTexCoord, NULL,squareIndices, 4, 6);
+
+	
+	/*mat4 MVP;
+	int i, j;
+	for (i = 0; i<4; ++i) {
+		for (j = 0; j<4; ++j)
+			 MVP[i][j] = 1;
+	}
+
+	mat4 Matrix1;
+	int i,j;
+	for (i = 0; i<4; ++i) {
+		for (j = 0; j<4; ++j)
+			Matrix1[i][j] = 1;
+	}*/
+	/*mat4 Matrix1 = IdentityMatrix();
+	mat4 Matrix2 = Mult(Mult(trans1, trans2), Mult(bone2ToGlob, bone1ToGlob));
+
+	glUniformMatrix4fv(glGetUniformLocation(g_shader, "M1"), 1, GL_TRUE, Matrix1.m);
+	glUniformMatrix4fv(glGetUniformLocation(g_shader, "M2"), 1, GL_TRUE, Matrix2.m);*/
 	
 	//Create initial textures on the FBOs;
 	GLuint initVelosity = loadShaders("Shaders/initVelosityVertexShader.glsl", "Shaders/initVelosityFragmentShader.glsl");
@@ -99,6 +119,16 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(initVelosity);
+
+	/*GLuint MatrixID = glGetUniformLocation(initVelosity, "MVP");
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(initVelosity, "M1"), 1, GL_TRUE, &Matrix1[0][0]);*/
+	GLint loc = glGetUniformLocation(initVelosity, "height");
+	if (loc != -1)
+	{
+		glUniform1f(loc, 0.432);
+	}
+
 	DrawModel(squareModel, initVelosity, "in_Position", NULL, NULL);
 	
 	useFBO(fboOldVel, 0L, 0L);

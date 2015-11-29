@@ -3,6 +3,8 @@
 in vec3 in_Position;
 in vec2 in_TexCoord;
 
+uniform float height;
+
 out vec3 Position;
 out vec2 texCoord;
 
