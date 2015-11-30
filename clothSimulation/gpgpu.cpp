@@ -94,25 +94,6 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 	Model* squareModel = LoadDataToModel(square, NULL, squareTexCoord, NULL,squareIndices, 4, 6);
 
 	
-	/*mat4 MVP;
-	int i, j;
-	for (i = 0; i<4; ++i) {
-		for (j = 0; j<4; ++j)
-			 MVP[i][j] = 1;
-	}
-
-	mat4 Matrix1;
-	int i,j;
-	for (i = 0; i<4; ++i) {
-		for (j = 0; j<4; ++j)
-			Matrix1[i][j] = 1;
-	}*/
-	/*mat4 Matrix1 = IdentityMatrix();
-	mat4 Matrix2 = Mult(Mult(trans1, trans2), Mult(bone2ToGlob, bone1ToGlob));
-
-	glUniformMatrix4fv(glGetUniformLocation(g_shader, "M1"), 1, GL_TRUE, Matrix1.m);
-	glUniformMatrix4fv(glGetUniformLocation(g_shader, "M2"), 1, GL_TRUE, Matrix2.m);*/
-	
 	//Create initial textures on the FBOs;
 	GLuint initVelosity = loadShaders("Shaders/initVelosityVertexShader.glsl", "Shaders/initVelosityFragmentShader.glsl");
 	useFBO(fboVel, 0L, 0L);
@@ -120,27 +101,24 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(initVelosity);
 
-	/*GLuint MatrixID = glGetUniformLocation(initVelosity, "MVP");
-	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(initVelosity, "M1"), 1, GL_TRUE, &Matrix1[0][0]);*/
-	GLint loc = glGetUniformLocation(initVelosity, "height");
-	if (loc != -1)
+	GLint locHeight = glGetUniformLocation(initVelosity, "height");
+	GLint locWidth = glGetUniformLocation(initVelosity, "width");
+	if (locHeight != -1 && locWidth != -1)
 	{
-		glUniform1f(loc, 0.432);
+		glUniform1f(locWidth, nrOfParticlesHorizontally);
+		glUniform1f(locHeight, nrOfParticlesVertically);
 	}
 
-	DrawModel(squareModel, initVelosity, "in_Position", NULL, NULL);
-	
-	useFBO(fboOldVel, 0L, 0L);
-	glClearColor(0.0, 0.0, 0.0, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	DrawModel(squareModel, initVelosity, "in_Position", NULL, NULL);
+	DrawModel(squareModel, initVelosity, "in_Position", NULL, "in_TexCoord");
 
 	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
 	float particlePixels[SIZE];
 	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
-	cout << " Init velosity: " << particlePixels[0] << " " << particlePixels[1] << " " << particlePixels[2] << " " << particlePixels[3] << " " << particlePixels[4] << endl;
-
+	cout << " Init velosity: " << particlePixels[0] << " " << particlePixels[1] << " " << particlePixels[2] << " " << particlePixels[3] << endl;
+	cout << " Init velosity: " << particlePixels[4] << " " << particlePixels[5] << " " << particlePixels[6] << " " << particlePixels[7] << endl;
+	cout << " Init velosity: " << particlePixels[8] << " " << particlePixels[9] << " " << particlePixels[10] << " " << particlePixels[11] << endl;
+	cout << " Init velosity: " << particlePixels[12] << " " << particlePixels[13] << " " << particlePixels[14] << " " << particlePixels[15] << endl << endl;
+	cout << " Init velosity: " << particlePixels[SIZE-4] << " " << particlePixels[SIZE - 3] << " " << particlePixels[SIZE - 2] << " " << particlePixels[SIZE - 1] << endl << endl;
 	/*GLuint initPosition = loadShaders("Shaders/initPositionVertexShader.glsl", "Shaders/initPositionFragmentShader.glsl");
 	useFBO(fboPos, 0L, 0L);
 	glClearColor(0.0, 0.0, 0.0, 0);
