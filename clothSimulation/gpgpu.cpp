@@ -79,6 +79,10 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	};*/
 }
 
+
+/**************************************
+ * Create initial textures on the FBOs*
+ **************************************/
 void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOstruct *fboOldVel)
 {
 	// en enkel fyrkant att rita på
@@ -94,8 +98,13 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 	Model* squareModel = LoadDataToModel(square, NULL, squareTexCoord, NULL,squareIndices, 4, 6);
 
 	
-	//Create initial textures on the FBOs;
+	
 	GLuint initVelosity = loadShaders("Shaders/initVelosityVertexShader.glsl", "Shaders/initVelosityFragmentShader.glsl");
+	GLuint passOverValues = loadShaders("Shaders/passVertexShader.glsl", "Shaders/passFragmentShader.glsl");
+
+	/****************
+	 * Velosity FBO *
+	 ****************/
 	useFBO(fboVel, 0L, 0L);
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -111,14 +120,27 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 
 	DrawModel(squareModel, initVelosity, "in_Position", NULL, "in_TexCoord");
 
+	/******************************************************
+	 * Old velosity                                       *
+	 * The same sa velosity, so just pass over the values *
+	 ******************************************************/
+
+	useFBO(fboOldVel, fboVel, 0L);
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(passOverValues);
+
+	DrawModel(squareModel, passOverValues, "in_Position", NULL, "in_TexCoord");
+
 	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
 	float particlePixels[SIZE];
 	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
-	cout << " Init velosity: " << particlePixels[0] << " " << particlePixels[1] << " " << particlePixels[2] << " " << particlePixels[3] << endl;
-	cout << " Init velosity: " << particlePixels[4] << " " << particlePixels[5] << " " << particlePixels[6] << " " << particlePixels[7] << endl;
-	cout << " Init velosity: " << particlePixels[8] << " " << particlePixels[9] << " " << particlePixels[10] << " " << particlePixels[11] << endl;
-	cout << " Init velosity: " << particlePixels[12] << " " << particlePixels[13] << " " << particlePixels[14] << " " << particlePixels[15] << endl << endl;
-	cout << " Init velosity: " << particlePixels[SIZE-4] << " " << particlePixels[SIZE - 3] << " " << particlePixels[SIZE - 2] << " " << particlePixels[SIZE - 1] << endl << endl;
+	
+	for (int j = 0; j < SIZE; j += 4)
+	{
+		cout << " Init velosity: " << particlePixels[j] << " " << particlePixels[j+1] << " " << particlePixels[j+2] << " " << particlePixels[j+3] << endl;
+	}
+
 	/*GLuint initPosition = loadShaders("Shaders/initPositionVertexShader.glsl", "Shaders/initPositionFragmentShader.glsl");
 	useFBO(fboPos, 0L, 0L);
 	glClearColor(0.0, 0.0, 0.0, 0);

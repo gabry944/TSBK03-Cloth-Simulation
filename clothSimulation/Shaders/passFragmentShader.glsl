@@ -11,9 +11,6 @@ void main(void) {
   
   vec2 cord = texCoord;
   vec4 c = texture(tex, cord);
-  c.r =  c.r - 30;
-  c.g =  c.g - 30;
-  c.b =  c.b - 30;
   Out_Color = c; 
 
 }
