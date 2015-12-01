@@ -230,6 +230,8 @@ void placeParticles(vector<glm::vec3> &particles) {
 
 		particles.push_back(tempVec);
 	}
+
+
 }
         
 // Takes in a vector of Coordinates for each particle 

@@ -175,6 +175,7 @@ int main(void) {
 	fboOldVel = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldVelocityPixels);
 
 	initGPGPU(fboPos, fboOldPos, fboVel, fboOldVel);
+	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
 
 	//initGPGPU(particles, particle_old, velocity, velocity_old, fboPos1, fboPos2, fboVel1, fboVel2);
 	/*fboPos1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);
@@ -201,8 +202,6 @@ int main(void) {
 		fprintf(stderr, "Could not bind uniform %s\n", "mvp");
 		return 0;
 	}
-
-	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
 
 	// run untill window should close
 	while (!glfwWindowShouldClose(window)) {
