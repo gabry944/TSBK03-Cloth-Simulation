@@ -23,10 +23,27 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	GLuint EulerShader = loadShaders("Shaders/eulerVertexShader.glsl", "Shaders/eulerFragmentShader.glsl");
+	GLuint velocityEulerShader = loadShaders("Shaders/velocityEulerVertexShader.glsl", "Shaders/velocityEulerFragmentShader.glsl");
 	// Activate shader program
-	glUseProgram(EulerShader);
-	DrawModel(squareModel, EulerShader, "in_Position", NULL, "in_TexCoord");
+	glUseProgram(velocityEulerShader);
+
+	//send shared varible to shader // behövdes inte göras i render lopen har jag för mig
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "nrOfParticlesHorizontally"), nrOfParticlesHorizontally);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "timestep"), timestep);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "particleMass"), particleMass);
+	//glUniform3f(glGetUniformLocation(velocityEulerShader, "g"), g);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "kSt"), kSt);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "kSh"), kSh);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "kB"), kB);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "oaSt"), oaSt);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "oaSh"), oaSh);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "oaB"), oaB);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "cSt"), cSt);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "cSh"), cSh);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "cB"), cB);
+	
+
+	DrawModel(squareModel, velocityEulerShader, "in_Position", NULL, "in_TexCoord");
 
 	//test so everything whent fine
 	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
@@ -82,7 +99,7 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 	Model* squareModel = LoadDataToModel(square, NULL, squareTexCoord, NULL,squareIndices, 4, 6);
 
 
-	GLuint initVelosity = loadShaders("Shaders/initVelosityVertexShader.glsl", "Shaders/initVelosityFragmentShader.glsl");
+	GLuint initVelosity = loadShaders("Shaders/initVelocityVertexShader.glsl", "Shaders/initVelocityFragmentShader.glsl");
 	GLuint passOverValues = loadShaders("Shaders/passVertexShader.glsl", "Shaders/passFragmentShader.glsl");
 	GLuint initPosition = loadShaders("Shaders/initPositionVertexShader.glsl", "Shaders/initPositionFragmentShader.glsl");
 

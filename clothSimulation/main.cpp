@@ -174,7 +174,7 @@ int main(void) {
 	fboVel = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, velocityPixels);
 	fboOldVel = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldVelocityPixels);
 
-	//initGPGPU(fboPos, fboOldPos, fboVel, fboOldVel);
+	initGPGPU(fboPos, fboOldPos, fboVel, fboOldVel);
 	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
 
 	//initGPGPU(particles, particle_old, velocity, velocity_old, fboPos1, fboPos2, fboVel1, fboVel2);
