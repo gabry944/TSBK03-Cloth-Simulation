@@ -19,7 +19,7 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 		square, NULL, squareTexCoord, NULL,
 		squareIndices, 4, 6);
 
-	useFBO(fboPos, fboOldPos, 0L); //MÅSTE VARA PÅ VÄNSTER SIDA!!!!!
+	useFBO(fboVel, fboOldVel, fboOldPos);
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -31,7 +31,7 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "nrOfParticlesHorizontally"), nrOfParticlesHorizontally);
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "timestep"), timestep);
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "particleMass"), particleMass);
-	//glUniform3f(glGetUniformLocation(velocityEulerShader, "g"), g);
+	glUniform3f(glGetUniformLocation(velocityEulerShader, "g"), g.x, g.y, g.z);
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "kSt"), kSt);
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "kSh"), kSh);
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "kB"), kB);
@@ -45,7 +45,7 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 
 	DrawModel(squareModel, velocityEulerShader, "in_Position", NULL, "in_TexCoord");
 
-	//test so everything whent fine
+	//test so everything went fine
 	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
 	float particlePixels[SIZE];
 	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
@@ -55,7 +55,7 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	}
 		
 	GLuint pass = loadShaders("Shaders/passVertexShader.glsl", "Shaders/passFragmentShader.glsl");
-	useFBO(fboOldPos, fboPos, 0L);
+	useFBO(fboOldPos, fboPos, 0L); //MÅSTE VARA PÅ VÄNSTER SIDA!!!!!
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(pass);
