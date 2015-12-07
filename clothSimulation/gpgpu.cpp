@@ -55,7 +55,7 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	}
 		
 	GLuint pass = loadShaders("Shaders/passVertexShader.glsl", "Shaders/passFragmentShader.glsl");
-	useFBO(fboOldPos, fboPos, 0L); //MÅSTE VARA PÅ VÄNSTER SIDA!!!!!
+	useFBO(fboOldVel, fboVel, 0L); //MÅSTE VARA PÅ VÄNSTER SIDA!!!!!
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(pass);
@@ -133,6 +133,14 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 
 	DrawModel(squareModel, passOverValues, "in_Position", NULL, "in_TexCoord");
 
+	//test so everything whent fine
+	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
+	float particlePixels[SIZE];
+	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	for (int j = 0; j < SIZE; j += 4)
+	{
+		cout << " Init velosity: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
+	}
 
 	/***************
 	* Position FBO *
@@ -167,12 +175,12 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 	DrawModel(squareModel, passOverValues, "in_Position", NULL, "in_TexCoord");
 
 	//test so everything whent fine
-	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
-	float particlePixels[SIZE];
+	//const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
+	//float particlePixels[SIZE];
 	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
 	for (int j = 0; j < SIZE; j += 4)
 	{
-		cout << " Init velosity: " << particlePixels[j] << "  " << particlePixels[j+1] << "  " << particlePixels[j+2] << "  " << particlePixels[j+3] << endl;
+		cout << " Init positions: " << particlePixels[j] << "  " << particlePixels[j+1] << "  " << particlePixels[j+2] << "  " << particlePixels[j+3] << endl;
 	}
 }
 

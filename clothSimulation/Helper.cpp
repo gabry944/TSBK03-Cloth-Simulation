@@ -337,7 +337,10 @@ void useFBO(FBOstruct *out, FBOstruct *in1, FBOstruct *in2)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glActiveTexture(GL_TEXTURE1);
 	if (in2 != 0L)
+	{
 		glBindTexture(GL_TEXTURE_2D, in2->texid);
+		fprintf(stderr, "\n tex2 binded \n", in2->texid);
+	}
 	else
 		glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
