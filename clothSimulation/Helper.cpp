@@ -1,6 +1,5 @@
 #include "Helper.h"
 #include <stdlib.h> 
-
 // Shader loader
 
 char* readFile(char *file)
@@ -304,7 +303,9 @@ static int lasth = 0;
 void useFBO(FBOstruct *out, FBOstruct *in1, FBOstruct *in2)
 {
 	GLint curfbo;
-
+	GLint velocityPosition, positionPosition;
+	velocityPosition = glGetUniformLocation(19, "VelocityOld");
+	positionPosition = glGetUniformLocation(19, "PositionOld");
 	// This was supposed to catch changes in viewport size and update lastw/lasth.
 	// It worked for me in the past, but now it causes problems to I have to
 	// fall back to manual updating.
@@ -335,17 +336,24 @@ void useFBO(FBOstruct *out, FBOstruct *in1, FBOstruct *in2)
 	}
 	else
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+
 	glActiveTexture(GL_TEXTURE1);
 	if (in2 != 0L)
 	{
 		glBindTexture(GL_TEXTURE_2D, in2->texid);
-		fprintf(stderr, "\n tex2 binded \n", in2->texid);
+		glUniform1i(positionPosition, 1);
+		fprintf(stderr, "\n tex2(position) binded id: %d \n", in2->texid);
 	}
 	else
 		glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
-	if (in1 != 0L)
+	if (in1 != 0L){
+		//glUniform1i(velocityPosition, 0); // det är defalt till 0 :)
 		glBindTexture(GL_TEXTURE_2D, in1->texid);
+		fprintf(stderr, "\n tex1(velocity) binded id: %d \n", in1->texid);
+	}
 	else
 		glBindTexture(GL_TEXTURE_2D, 0);
 }

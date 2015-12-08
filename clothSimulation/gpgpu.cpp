@@ -19,6 +19,10 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 		square, NULL, squareTexCoord, NULL,
 		squareIndices, 4, 6);
 
+	GLuint velocityEulerShader = loadShaders("Shaders/velocityEulerVertexShader.glsl", "Shaders/velocityEulerFragmentShader.glsl");
+	glUseProgram(velocityEulerShader);
+	std::cout << velocityEulerShader << std::endl;
+
 	useFBO(fboVel, fboOldVel, fboOldPos);
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
