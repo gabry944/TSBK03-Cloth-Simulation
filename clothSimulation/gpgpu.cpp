@@ -27,10 +27,6 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	GLuint velocityEulerShader = loadShaders("Shaders/velocityEulerVertexShader.glsl", "Shaders/velocityEulerFragmentShader.glsl");
-	// Activate shader program
-	glUseProgram(velocityEulerShader);
-
 	//send shared varible to shader // behövdes inte göras i render lopen har jag för mig
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "nrOfParticlesHorizontally"), nrOfParticlesHorizontally);
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "timestep"), timestep);

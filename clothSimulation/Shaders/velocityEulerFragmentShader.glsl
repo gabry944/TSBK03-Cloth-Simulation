@@ -114,20 +114,50 @@ void main(void) {
 		velLeft.b = temp.b;
 
 		//streatch spring upwards
-		kUp = (posUp - position)* ((normalize(posUp - position) - oaSt)/normalize(posUp-position));
+		//check for devison by zero and normalisation of zero vector
+		vec3 diff = posUp - position;
+		vec3 ndiff = normalize(diff);
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z ==0)
+			kUp = vec3(0,0,0);
+		else
+			kUp = (diff)* ((ndiff - oaSt)/ndiff);
+		
 		cUp = velUp - velocity;	
 	
+		
 		//streatch spring to the right
-		kRight = (posRight - position)*((normalize(posRight - position) - oaSt) / normalize(posRight - position));
+		//check for devison by zero and normalisation of zero vector
+		diff = posRight - position;
+		ndiff = normalize(diff);
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			kRight = vec3(0,0,0);
+		else
+			kRight = (diff)* ((ndiff - oaSt)/ndiff);
+		
 		cRight = velRight - velocity;
 
 		//streatch spring downwards
-		kDown = (posDown - position)*((normalize(posDown - position) - oaSt) / normalize(posDown - position));
-		cDown = velDown - velocity;
+		//check for devison by zero and normalisation of zero vector
+		diff = posDown - position;
+		ndiff = normalize(diff);
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			kDown = vec3(0,0,0);
+		else
+			kDown = (diff)* ((ndiff - oaSt)/ndiff);
 
+		cDown = velDown - velocity;
+		
 		//streatch spring to the left
-		kLeft = (posLeft - position)*((normalize(posLeft - position) - oaSt) / normalize(posLeft - position));
+		//check for devison by zero and normalisation of zero vector
+		diff = posLeft - position;
+		ndiff = normalize(diff);
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			kLeft = vec3(0,0,0);
+		else
+			kLeft = (diff)* ((ndiff - oaSt)/ndiff);
+		
 		cLeft = velLeft - velocity;
+
 	/*
 		//streatch spring upwards
 		kUp = ((particle_old[j - nrOfParticlesHorizontally] - particle_old[j])*((norm(particle_old[j - nrOfParticlesHorizontally] - particle_old[j]) - oaSt) / norm(particle_old[j - nrOfParticlesHorizontally] - particle_old[j])));
@@ -179,7 +209,6 @@ void main(void) {
 		kUpLeft = vec3(0,0,0);// ((particle_old[j - nrOfParticlesHorizontally - 1] - particle_old[j])*((norm(particle_old[j - nrOfParticlesHorizontally - 1] - particle_old[j]) - oaSh) / norm(particle_old[j - nrOfParticlesHorizontally - 1] - particle_old[j])));
 		cUpLeft = vec3(0,0,0);//velocity_old[j - nrOfParticlesHorizontally - 1] - velocity_old[j];
 		
-
 
 
 
