@@ -303,9 +303,10 @@ static int lasth = 0;
 void useFBO(FBOstruct *out, FBOstruct *in1, FBOstruct *in2)
 {
 	GLint curfbo;
-	GLint velocityPosition, positionPosition;
-	velocityPosition = glGetUniformLocation(19, "VelocityOld");
-	positionPosition = glGetUniformLocation(19, "PositionOld");
+	/*GLint velocityPosition, positionPosition;
+	velocityPosition = glGetUniformLocation(GL_CURRENT_PROGRAM, "VelocityOld");
+	positionPosition = glGetUniformLocation(GL_CURRENT_PROGRAM, "PositionOld");*/
+
 	// This was supposed to catch changes in viewport size and update lastw/lasth.
 	// It worked for me in the past, but now it causes problems to I have to
 	// fall back to manual updating.
@@ -343,16 +344,82 @@ void useFBO(FBOstruct *out, FBOstruct *in1, FBOstruct *in2)
 	if (in2 != 0L)
 	{
 		glBindTexture(GL_TEXTURE_2D, in2->texid);
-		glUniform1i(positionPosition, 1);
-		fprintf(stderr, "\n tex2(position) binded id: %d \n", in2->texid);
+		//glUniform1i(positionPosition, 1);
+		fprintf(stderr, "\n FEL FBO FUNKTION! \n", in2->texid);
 	}
 	else
 		glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
 	if (in1 != 0L){
+		//fprintf(stderr, "\n GL_CURRENT_PROGRAM är : %d \n", GL_CURRENT_PROGRAM);
+		//fprintf(stderr, " velocityPosition är : %d \n", velocityPosition);
+		//velocityPosition = glGetUniformLocation(19, "VelocityOld");
+		//fprintf(stderr, " velocityPosition är : %d \n", velocityPosition);
 		//glUniform1i(velocityPosition, 0); // det är defalt till 0 :)
 		glBindTexture(GL_TEXTURE_2D, in1->texid);
-		fprintf(stderr, "\n tex1(velocity) binded id: %d \n", in1->texid);
+		//fprintf(stderr, "\n tex1(velocity) binded id: %d \n", in1->texid);
+	}
+	else
+		glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void use2FBO(FBOstruct *out, FBOstruct *in1, FBOstruct *in2, GLuint program)
+{
+	GLint curfbo;
+	GLint velocityPosition, positionPosition;
+	velocityPosition = glGetUniformLocation(program, "VelocityOld");
+	positionPosition = glGetUniformLocation(program, "PositionOld"); 
+
+		// This was supposed to catch changes in viewport size and update lastw/lasth.
+		// It worked for me in the past, but now it causes problems to I have to
+		// fall back to manual updating.
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &curfbo);
+	if (curfbo == 0)
+	{
+		GLint viewport[4] = { 0, 0, 0, 0 };
+		GLint w, h;
+		glGetIntegerv(GL_VIEWPORT, viewport);
+		w = viewport[2] - viewport[0];
+		h = viewport[3] - viewport[1];
+		if ((w > 0) && (h > 0) && (w < 65536) && (h < 65536)) // I don't believe in 64k pixel wide frame buffers for quite some time
+		{
+			lastw = viewport[2] - viewport[0];
+			lasth = viewport[3] - viewport[1];
+		}
+	}
+
+	if (out != 0L)
+		glViewport(0, 0, out->width, out->height);
+	else
+		glViewport(0, 0, lastw, lasth);
+
+	if (out != 0L)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, out->fb);
+		glViewport(0, 0, out->width, out->height);
+	}
+	else
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	glActiveTexture(GL_TEXTURE1);
+	if (in2 != 0L)
+	{
+		fprintf(stderr, "\n PROGRAM : %d \n", program);
+		fprintf(stderr, " positionPosition : %d \n", positionPosition);
+		glBindTexture(GL_TEXTURE_2D, in2->texid);
+		glUniform1i(positionPosition, 1);
+		//fprintf(stderr, "\n tex2(position) binded id: %d \n", in2->texid);
+	}
+	else
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+	if (in1 != 0L){
+		fprintf(stderr, "\n PROGRAM : %d \n", program);
+		fprintf(stderr, " velocityPosition : %d \n", velocityPosition);
+		glUniform1i(velocityPosition, 0); // det är defalt till 0 :)
+		glBindTexture(GL_TEXTURE_2D, in1->texid);
+		//fprintf(stderr, "\n tex1(velocity) binded id: %d \n", in1->texid);
 	}
 	else
 		glBindTexture(GL_TEXTURE_2D, 0);

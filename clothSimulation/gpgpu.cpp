@@ -21,9 +21,9 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 
 	GLuint velocityEulerShader = loadShaders("Shaders/velocityEulerVertexShader.glsl", "Shaders/velocityEulerFragmentShader.glsl");
 	glUseProgram(velocityEulerShader);
-	std::cout << velocityEulerShader << std::endl;
+	std::cout <<"hej "<< velocityEulerShader << std::endl;
 
-	useFBO(fboVel, fboOldVel, fboOldPos);
+	use2FBO(fboVel, fboOldVel, fboOldPos, velocityEulerShader);
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -40,8 +40,7 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "oaB"), oaB);
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "cSt"), cSt);
 	glUniform1f(glGetUniformLocation(velocityEulerShader, "cSh"), cSh);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "cB"), cB);
-	
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "cB"), cB);	
 
 	DrawModel(squareModel, velocityEulerShader, "in_Position", NULL, "in_TexCoord");
 
@@ -55,18 +54,46 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	}
 		
 	GLuint pass = loadShaders("Shaders/passVertexShader.glsl", "Shaders/passFragmentShader.glsl");
+	glUseProgram(pass);
 	useFBO(fboOldVel, fboVel, 0L); //MÅSTE VARA PÅ VÄNSTER SIDA!!!!!
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(pass);
 	DrawModel(squareModel, pass, "in_Position", NULL, "in_TexCoord");
 
-	//const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
-	//float particlePixels[SIZE];
+	//testar 
 	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
 	for (int j = 0; j < SIZE; j += 4)
 	{
-		cout << "PassShader: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
+		cout << "Pass velocity: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
+	}
+	//old position is updated to current position
+	useFBO(fboOldPos, fboPos, 0L); 
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	DrawModel(squareModel, pass, "in_Position", NULL, "in_TexCoord");
+
+	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	for (int j = 0; j < SIZE; j += 4)
+	{
+		cout << "PassPosition: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
+	}
+
+	
+	//current position is updated to new position, need currnt position therfot updated ond position first
+	GLuint PositionEulerShader = loadShaders("Shaders/positionEulerVertexShader.glsl", "Shaders/positionEulerFragmentShader.glsl");
+	glUseProgram(PositionEulerShader);
+	std::cout <<"hej2 "<< PositionEulerShader << std::endl;
+
+	use2FBO(fboPos, fboVel, fboOldPos, PositionEulerShader);
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUniform1f(glGetUniformLocation(velocityEulerShader, "timestep"), timestep);
+	DrawModel(squareModel, PositionEulerShader, "in_Position", NULL, "in_TexCoord");
+
+	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	for (int j = 0; j < SIZE; j += 4)
+	{
+		cout << "Euler Position: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
 	}
 
 	/*for (int i = 0, j = 0; i < particle.size(); i++, j += 4)
