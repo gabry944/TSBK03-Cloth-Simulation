@@ -79,7 +79,7 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	}
 
 	
-	//current position is updated to new position, need currnt position therfot updated ond position first
+	//current position is updated to new position, need currnt position therfor updated ond position first
 	GLuint PositionEulerShader = loadShaders("Shaders/positionEulerVertexShader.glsl", "Shaders/positionEulerFragmentShader.glsl");
 	glUseProgram(PositionEulerShader);
 	std::cout <<"hej2 "<< PositionEulerShader << std::endl;
@@ -87,7 +87,7 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	use2FBO(fboPos, fboVel, fboOldPos, PositionEulerShader);
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "timestep"), timestep);
+	glUniform1f(glGetUniformLocation(PositionEulerShader, "timestep"), timestep);
 	DrawModel(squareModel, PositionEulerShader, "in_Position", NULL, "in_TexCoord");
 
 	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
@@ -96,15 +96,13 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 		cout << "Euler Position: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
 	}
 
-	/*for (int i = 0, j = 0; i < particle.size(); i++, j += 4)
+	for (int i = 0, j = 0; i < particle.size(); i++, j += 4)
 	{
-		//cout << particlePixels[j];
-		//cout << particlePixels[j + 1];
-		//cout << particlePixels[j + 2];
-		particle.at(i).x = particlePixels[j];
+		cout << "Position vector: " << particlePixels[j] << " " << particlePixels[j + 1] << " " << particlePixels[j + 2] << endl;
+		/*particle.at(i).x = particlePixels[j];
 		particle.at(i).y = particlePixels[j + 1];
-		particle.at(i).z = particlePixels[j + 2];
-	};*/
+		particle.at(i).z = particlePixels[j + 2];*/
+	};
 }
 
 
