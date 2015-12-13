@@ -67,7 +67,7 @@ void main(void) {
 	{
 		//streatch spring upwards
 		vec4 temp = texture(PositionOld, cord - nrOfParticlesHorizontally); 
-		vec3 posUp;
+		vec3 posUp = vec3(temp);
 		posUp.r = temp.r;
 		posUp.g = temp.g;
 		posUp.b = temp.b;
@@ -76,7 +76,15 @@ void main(void) {
 		velUp.r = temp.r;
 		velUp.g = temp.g;
 		velUp.b = temp.b;
-
+		vec3 diff = posUp - position;
+		vec3 ndiff = normalize(diff);
+		cUp = velUp - velocity;	
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z ==0)
+			kUp = vec3(0,0,0);
+		else
+			kUp = (diff)* ((ndiff - oaSt)/ndiff);		
+	
 		//streatch spring to the right
 		temp = texture(PositionOld, cord + 1); 
 		vec3 posRight;
@@ -87,8 +95,16 @@ void main(void) {
 		vec3 velRight;
 		velRight.r = temp.r;
 		velRight.g = temp.g;
-		velRight.b = temp.b;
-
+		velRight.b = temp.b;				
+		diff = posRight - position;
+		ndiff = normalize(diff);
+		cRight = velRight - velocity;
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			kRight = vec3(0,0,0);
+		else
+			kRight = (diff)* ((ndiff - oaSt)/ndiff);
+		
 		//streatch spring downwards
 		temp = texture(PositionOld, cord + nrOfParticlesHorizontally); 
 		vec3 posDown;
@@ -100,7 +116,15 @@ void main(void) {
 		velDown.r = temp.r;
 		velDown.g = temp.g;
 		velDown.b = temp.b;
-
+		diff = posDown - position;
+		ndiff = normalize(diff);
+		cDown = velDown - velocity;
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			kDown = vec3(0,0,0);
+		else
+			kDown = (diff)* ((ndiff - oaSt)/ndiff);
+		
 		//streatch spring to the left
 		temp = texture(PositionOld, cord + 1); 
 		vec3 posLeft;
@@ -112,103 +136,176 @@ void main(void) {
 		velLeft.r = temp.r;
 		velLeft.g = temp.g;
 		velLeft.b = temp.b;
-
-		//streatch spring upwards
-		//check for devison by zero and normalisation of zero vector
-		vec3 diff = posUp - position;
-		vec3 ndiff = normalize(diff);
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z ==0)
-			kUp = vec3(0,0,0);
-		else
-			kUp = (diff)* ((ndiff - oaSt)/ndiff);
-		
-		cUp = velUp - velocity;	
-	
-		
-		//streatch spring to the right
-		//check for devison by zero and normalisation of zero vector
-		diff = posRight - position;
-		ndiff = normalize(diff);
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
-			kRight = vec3(0,0,0);
-		else
-			kRight = (diff)* ((ndiff - oaSt)/ndiff);
-		
-		cRight = velRight - velocity;
-
-		//streatch spring downwards
-		//check for devison by zero and normalisation of zero vector
-		diff = posDown - position;
-		ndiff = normalize(diff);
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
-			kDown = vec3(0,0,0);
-		else
-			kDown = (diff)* ((ndiff - oaSt)/ndiff);
-
-		cDown = velDown - velocity;
-		
-		//streatch spring to the left
-		//check for devison by zero and normalisation of zero vector
 		diff = posLeft - position;
 		ndiff = normalize(diff);
+		cLeft = velLeft - velocity;
+		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
 			kLeft = vec3(0,0,0);
 		else
 			kLeft = (diff)* ((ndiff - oaSt)/ndiff);
 		
-		cLeft = velLeft - velocity;
 
-	/*
-		//streatch spring upwards
-		kUp = ((particle_old[j - nrOfParticlesHorizontally] - particle_old[j])*((norm(particle_old[j - nrOfParticlesHorizontally] - particle_old[j]) - oaSt) / norm(particle_old[j - nrOfParticlesHorizontally] - particle_old[j])));
-		cUp = velocity_old[j - nrOfParticlesHorizontally] - velocity_old[j];
-
-		//streatch spring to the right
-		kRight = ((particle_old[j + 1] - particle_old[j])*((norm(particle_old[j + 1] - particle_old[j]) - oaSt) / norm(particle_old[j + 1] - particle_old[j])));
-		cRight = velocity_old[j + 1] - velocity_old[j];
-
-		//streatch spring downwards
-		kDown = ((particle_old[ j + nrOfParticlesHorizontally] - particle_old[j])*((norm(particle_old[j + nrOfParticlesHorizontally] - particle_old[j]) - oaSt) / norm(particle_old[j + nrOfParticlesHorizontally] - particle_old[j])));
-		cDown = velocity_old[j + nrOfParticlesHorizontally] - velocity_old[j];
-
-		//streatch spring to the left
-		kLeft = ((particle_old[j - 1] - particle_old[j])*((norm(particle_old[j - 1] - particle_old[j]) - oaSt) / norm(particle_old[j - 1] - particle_old[j])));
-		cLeft = velocity_old[j - 1] - velocity_old[j];
-	*/
-	/*
 		//bend spring upwards
-		k2Up = ((particle_old[j - 2 * nrOfParticlesHorizontally] - particle_old[j])*((norm(particle_old[j - 2 * nrOfParticlesHorizontally] - particle_old[j]) - oaB) / norm(particle_old[j - 2 * nrOfParticlesHorizontally] - particle_old[j])));
-		c2Up = velocity_old[j - 2 * nrOfParticlesHorizontally] - velocity_old[j];
-
+		temp = texture(PositionOld, cord - 2*nrOfParticlesHorizontally); 
+		vec3 pos2Up;
+		pos2Up.r = temp.r;
+		pos2Up.g = temp.g;
+		pos2Up.b = temp.b;
+		temp = texture(VelocityOld, cord - 2*nrOfParticlesHorizontally); 
+		vec3 vel2Up;
+		vel2Up.r = temp.r;
+		vel2Up.g = temp.g;
+		vel2Up.b = temp.b;
+		diff = pos2Up - position;
+		ndiff = normalize(diff);
+		c2Up = vel2Up - velocity;	
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z ==0)
+			k2Up = vec3(0,0,0);
+		else
+			k2Up = (diff)* ((ndiff - oaB)/ndiff);
+		
 		//bend spring to the right
-		k2Right = ((particle_old[j + 2] - particle_old[j])*((norm(particle_old[j + 2] - particle_old[j]) - oaB) / norm(particle_old[j + 2] - particle_old[j])));
-		c2Right = velocity_old[j + 2] - velocity_old[j];
+		temp = texture(PositionOld, cord + 2); 
+		vec3 pos2Right;
+		pos2Right.r = temp.r;
+		pos2Right.g = temp.g;
+		pos2Right.b = temp.b;
+		temp = texture(VelocityOld, cord + 2); 
+		vec3 vel2Right;
+		vel2Right.r = temp.r;
+		vel2Right.g = temp.g;
+		vel2Right.b = temp.b;
+		diff = pos2Right - position;
+		ndiff = normalize(diff);
+		c2Right = vel2Right - velocity;
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			k2Right = vec3(0,0,0);
+		else
+			k2Right = (diff)* ((ndiff - oaB)/ndiff);
 		
 		//bend spring downwards
-		k2Down = ((particle_old[j + 2 * nrOfParticlesHorizontally] - particle_old[j])*((norm(particle_old[j + 2 * nrOfParticlesHorizontally] - particle_old[j]) - oaB) / norm(particle_old[ j + 2 * nrOfParticlesHorizontally] - particle_old[j])));
-		c2Down = velocity_old[j + 2 * nrOfParticlesHorizontally] - velocity_old[j];
+		temp = texture(PositionOld, cord + 2*nrOfParticlesHorizontally); 
+		vec3 pos2Down;
+		pos2Down.r = temp.r;
+		pos2Down.g = temp.g;
+		pos2Down.b = temp.b;
+		temp = texture(VelocityOld, cord + 2*nrOfParticlesHorizontally); 
+		vec3 vel2Down;
+		vel2Down.r = temp.r;
+		vel2Down.g = temp.g;
+		vel2Down.b = temp.b;
+		diff = pos2Down - position;
+		ndiff = normalize(diff);
+		c2Down = vel2Down - velocity;
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			k2Down = vec3(0,0,0);
+		else
+			k2Down = (diff)* ((ndiff - oaB)/ndiff);
 
 		//bend spring to the left
-		k2Left = ((particle_old[j - 2] - particle_old[j])*((norm(particle_old[j - 2] - particle_old[j]) - oaB) / norm(particle_old[j - 2] - particle_old[j])));
-		c2Left = velocity_old[j - 2] - velocity_old[j];
+		temp = texture(PositionOld, cord + 2); 
+		vec3 pos2Left;
+		pos2Left.r = temp.r;
+		pos2Left.g = temp.g;
+		pos2Left.b = temp.b;
+		temp = texture(VelocityOld, cord + 2); 
+		vec3 vel2Left;
+		vel2Left.r = temp.r;
+		vel2Left.g = temp.g;
+		vel2Left.b = temp.b;
+		diff = pos2Left - position;
+		ndiff = normalize(diff);
+		c2Left = vel2Left - velocity;
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			k2Left = vec3(0,0,0);
+		else
+			k2Left = (diff)* ((ndiff - oaB)/ndiff);		
+
 		
-		//shear spring to the right and Upwards
-		kUpRight = ((particle_old[j - nrOfParticlesHorizontally + 1] - particle_old[j])*((norm(particle_old[j - nrOfParticlesHorizontally + 1] - particle_old[j]) - oaSh) / norm(particle_old[j - nrOfParticlesHorizontally + 1] - particle_old[j])));
-		cUpRight = velocity_old[ j - nrOfParticlesHorizontally + 1] - velocity_old[j];
-		
-		//shear spring to the right and downwards
-		kDownRight = ((particle_old[j + nrOfParticlesHorizontally + 1] - particle_old[j])*((norm(particle_old[j + nrOfParticlesHorizontally + 1] - particle_old[j]) - oaSh) / norm(particle_old[j + nrOfParticlesHorizontally + 1] - particle_old[j])));
-		cDownRight = velocity_old[j + nrOfParticlesHorizontally + 1] - velocity_old[j];
-		
-		//shear spring to the left and downwards
-		kDownLeft = ((particle_old[j + nrOfParticlesHorizontally - 1] - particle_old[j])*((norm(particle_old[j + nrOfParticlesHorizontally - 1] - particle_old[j]) - oaSh) / norm(particle_old[j + nrOfParticlesHorizontally - 1] - particle_old[j])));
-		cDownLeft = velocity_old[j + nrOfParticlesHorizontally - 1] - velocity_old[j];
-	*/
-		
+		//shear spring to the right and Upwards	
+		temp = texture(PositionOld, cord - nrOfParticlesHorizontally + 1); 
+		vec3 posUpRight;
+		posUpRight.r = temp.r;
+		posUpRight.g = temp.g;
+		posUpRight.b = temp.b;
+		temp = texture(VelocityOld, cord - nrOfParticlesHorizontally + 1); 
+		vec3 velUpRight;
+		velUpRight.r = temp.r;
+		velUpRight.g = temp.g;
+		velUpRight.b = temp.b;
+		diff = posUpRight - position;
+		ndiff = normalize(diff);
+		cUpRight = velUpRight - velocity;
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			kUpRight = vec3(0,0,0);
+		else
+			kUpRight = (diff)*((ndiff - oaSh) / ndiff);
+
+		//shear spring to the right and downwards	
+		temp = texture(PositionOld, cord + nrOfParticlesHorizontally + 1); 
+		vec3 posDownRight;
+		posDownRight.r = temp.r;
+		posDownRight.g = temp.g;
+		posDownRight.b = temp.b;
+		temp = texture(VelocityOld, cord + nrOfParticlesHorizontally + 1); 
+		vec3 velDownRight;
+		velDownRight.r = temp.r;
+		velDownRight.g = temp.g;
+		velDownRight.b = temp.b;
+		cDownRight = velDownRight - velocity;
+		diff = posDownRight - position;
+		ndiff = normalize(diff);
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			kDownRight = vec3(0,0,0);
+		else
+			kDownRight = (diff)*((ndiff - oaSh) / ndiff);
+
+		//shear spring to the left and downwards	
+		temp = texture(PositionOld, cord + nrOfParticlesHorizontally - 1); 
+		vec3 posDownLeft;
+		posDownLeft.r = temp.r;
+		posDownLeft.g = temp.g;
+		posDownLeft.b = temp.b;
+		temp = texture(VelocityOld, cord + nrOfParticlesHorizontally - 1); 
+		vec3 velDownLeft;
+		velDownLeft.r = temp.r;
+		velDownLeft.g = temp.g;
+		velDownLeft.b = temp.b;
+		cDownLeft = velDownLeft - velocity;
+		diff = posDownLeft - position;
+		ndiff = normalize(diff);
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			kDownLeft = vec3(0,0,0);
+		else
+			kDownLeft = (diff)*((ndiff - oaSh) / ndiff);
+							
 		//shear spring to the left and Upwards
-		kUpLeft = vec3(0,0,0);// ((particle_old[j - nrOfParticlesHorizontally - 1] - particle_old[j])*((norm(particle_old[j - nrOfParticlesHorizontally - 1] - particle_old[j]) - oaSh) / norm(particle_old[j - nrOfParticlesHorizontally - 1] - particle_old[j])));
-		cUpLeft = vec3(0,0,0);//velocity_old[j - nrOfParticlesHorizontally - 1] - velocity_old[j];
-		
+		temp = texture(PositionOld, cord - nrOfParticlesHorizontally - 1); 
+		vec3 posUpLeft;
+		posUpLeft.r = temp.r;
+		posUpLeft.g = temp.g;
+		posUpLeft.b = temp.b;
+		temp = texture(VelocityOld, cord - nrOfParticlesHorizontally - 1); 
+		vec3 velUpLeft;
+		velUpLeft.r = temp.r;
+		velUpLeft.g = temp.g;
+		velUpLeft.b = temp.b;
+		cUpLeft = velUpLeft - velocity;
+		diff = posUpLeft - position;
+		ndiff = normalize(diff);
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+			kUpLeft = vec3(0,0,0);
+		else
+			kUpLeft = (diff)*((ndiff - oaSh) / ndiff);
 
 
 
@@ -219,12 +316,6 @@ void main(void) {
 		vel.g = NewVelocity.g;
 		vel.b = NewVelocity.b;
 	}
-	else
-	{
-		/*c.r = c.r;
-		c.g = c.g;
-		c.b = c.b;
-		c.a = c.a;*/
-	}
+
 	Out_Color = vel;
 }

@@ -72,11 +72,11 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	DrawModel(squareModel, pass, "in_Position", NULL, "in_TexCoord");
 
-	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	/*glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
 	for (int j = 0; j < SIZE; j += 4)
 	{
 		cout << "PassPosition: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
-	}
+	}*/
 
 	
 	//current position is updated to new position, need currnt position therfor updated ond position first
@@ -90,11 +90,11 @@ void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_o
 	glUniform1f(glGetUniformLocation(PositionEulerShader, "timestep"), timestep);
 	DrawModel(squareModel, PositionEulerShader, "in_Position", NULL, "in_TexCoord");
 
-	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	/*glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
 	for (int j = 0; j < SIZE; j += 4)
 	{
 		cout << "Euler Position: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
-	}
+	}*/
 
 	for (int i = 0, j = 0; i < particle.size(); i++, j += 4)
 	{
@@ -161,11 +161,11 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 	//test so everything whent fine
 	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
 	float particlePixels[SIZE];
-	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	/*glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
 	for (int j = 0; j < SIZE; j += 4)
 	{
 		cout << " Init velosity: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
-	}
+	}*/
 
 	/***************
 	* Position FBO *
@@ -202,11 +202,11 @@ void initGPGPU(FBOstruct *fboPos, FBOstruct *fboOldPos, FBOstruct *fboVel, FBOst
 	//test so everything whent fine
 	//const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
 	//float particlePixels[SIZE];
-	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	/*glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
 	for (int j = 0; j < SIZE; j += 4)
 	{
 		cout << " Init positions: " << particlePixels[j] << "  " << particlePixels[j+1] << "  " << particlePixels[j+2] << "  " << particlePixels[j+3] << endl;
-	}
+	}*/
 }
 
 //gammla sättet med att försöka på på en färdigskapad texture
