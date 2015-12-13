@@ -17,18 +17,11 @@ void main(void) {
 	vec4 pos = texture(PositionOld, cord); 
 	
 	vec3 NewPosition;
-	vec3 velocity;
-	velocity.r = vel.r;
-	velocity.g = vel.g;
-	velocity.b = vel.b;
-	vec3 position;
-	position.r = pos.r;
-	position.g = pos.g;
-	position.b = pos.b;
+	vec3 velocity = vec3(vel);
+	vec3 position = vec3(pos);
 
 	//calculate the new position
-	//particlesNextPos[j] = particle[j] + timestep*velocity[j];
-	NewPosition  = position + timestep * velocity;
+	NewPosition = position + timestep * velocity;
 
 	pos.r = NewPosition.x;
 	pos.g = NewPosition.y;
