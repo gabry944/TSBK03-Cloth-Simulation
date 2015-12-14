@@ -22,10 +22,13 @@ void main(void) {
 
 	//calculate the new position
 	NewPosition = position + timestep * velocity;
-
-	pos.r = NewPosition.x;
-	pos.g = NewPosition.y;
-	pos.b = NewPosition.z;
 	
+	if(pos.a != 3 || pos.a != 4 )
+	{
+		pos.r = NewPosition.x;
+		pos.g = NewPosition.y;
+		pos.b = NewPosition.z;
+	}
+
 	Out_Color = pos;
 }

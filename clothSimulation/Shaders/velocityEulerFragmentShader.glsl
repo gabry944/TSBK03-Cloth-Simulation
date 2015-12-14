@@ -255,13 +255,17 @@ void main(void) {
 			kUpLeft = (diff)*((ndiff - oaSh) / ndiff);
 
 
+	//calculate the new velosity
+	NewVelocity = velocity + (timestep / particleMass)*(particleMass*g + kSt*(kUp +kLeft + kRight + kDown) + kSh*(kUpLeft + kUpRight + kDownLeft + kDownRight) + kB*(k2Up + k2Right + k2Down + k2Left) + cSt*(cUp + cLeft + cRight + cDown) + cSh*(cUpLeft + cUpRight + cDownLeft + cDownRight) + cB*(c2Up + c2Right + c2Down + c2Left));
+	vel.r = NewVelocity.r;
+	vel.g = NewVelocity.g;
+	vel.b = NewVelocity.b;
 
-		//calculate the new velosity
-		NewVelocity = velocity + (timestep / particleMass)*(particleMass*g + kSt*(kUp +kLeft + kRight + kDown) + kSh*(kUpLeft + kUpRight + kDownLeft + kDownRight) + kB*(k2Up + k2Right + k2Down + k2Left) + cSt*(cUp + cLeft + cRight + cDown) + cSh*(cUpLeft + cUpRight + cDownLeft + cDownRight) + cB*(c2Up + c2Right + c2Down + c2Left));
-		//NewVelocity = kUp;
-		vel.r = NewVelocity.r;
-		vel.g = NewVelocity.g;
-		vel.b = NewVelocity.b;
-	
+	if(vel.a == 3 || vel.a == 4 )
+	{
+		vel.r = 0;
+		vel.g = 0;
+		vel.b = 0;
+	}
 	Out_Color = vel;
 }

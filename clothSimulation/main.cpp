@@ -177,7 +177,12 @@ int main(void) {
 	initGPGPU(fboPos, fboOldPos, fboVel, fboOldVel);
 	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
 	Euler(particles, particle_old, velocity, velocity_old, staticParticles);
-
+	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
+	{
+		cout << "facit: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+	};
+	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
+	Euler(particles, particle_old, velocity, velocity_old, staticParticles);
 	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
 	{
 		cout << "facit: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
