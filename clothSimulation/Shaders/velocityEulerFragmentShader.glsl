@@ -63,8 +63,7 @@ void main(void) {
 	position.g = pos.g;
 	position.b = pos.b;
 
-	if (vel.a == 0)
-	{
+
 		//streatch spring upwards
 		vec4 temp = texture(PositionOld, cord - nrOfParticlesHorizontally); 
 		vec3 posUp = vec3(temp);
@@ -74,7 +73,8 @@ void main(void) {
 		vec3 ndiff = normalize(diff);
 		cUp = velUp - velocity;	
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z ==0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z ==0 
+			|| vel.a == 1 || vel.a == 5 || vel.a == 2)
 			kUp = vec3(0,0,0);
 		else
 			kUp = (diff)* ((ndiff - oaSt)/ndiff);		
@@ -88,7 +88,8 @@ void main(void) {
 		ndiff = normalize(diff);
 		cRight = velRight - velocity;
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 2 || vel.a == 7 || vel.a == 4)
 			kRight = vec3(0,0,0);
 		else
 			kRight = (diff)* ((ndiff - oaSt)/ndiff);
@@ -102,21 +103,23 @@ void main(void) {
 		ndiff = normalize(diff);
 		cDown = velDown - velocity;
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 3 || vel.a == 8 || vel.a == 4)
 			kDown = vec3(0,0,0);
 		else
 			kDown = (diff)* ((ndiff - oaSt)/ndiff);
 		
 		//streatch spring to the left
-		temp = texture(PositionOld, cord + 1); 
+		temp = texture(PositionOld, cord - 1); 
 		vec3 posLeft = vec3(temp);
-		temp = texture(VelocityOld, cord + 1); 
+		temp = texture(VelocityOld, cord - 1); 
 		vec3 velLeft = vec3(temp);
 		diff = posLeft - position;
 		ndiff = normalize(diff);
 		cLeft = velLeft - velocity;
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 1 || vel.a == 6 || vel.a == 3)
 			kLeft = vec3(0,0,0);
 		else
 			kLeft = (diff)* ((ndiff - oaSt)/ndiff);
@@ -131,7 +134,10 @@ void main(void) {
 		ndiff = normalize(diff);
 		c2Up = vel2Up - velocity;	
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z ==0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z ==0
+			|| vel.a == 1 || vel.a == 5 || vel.a == 2 
+			|| vel.a == 9 || vel.a == 13 || vel.a == 10
+			|| vel.a == 6 || vel.a == 7 )
 			k2Up = vec3(0,0,0);
 		else
 			k2Up = (diff)* ((ndiff - oaB)/ndiff);
@@ -145,7 +151,10 @@ void main(void) {
 		ndiff = normalize(diff);
 		c2Right = vel2Right - velocity;
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 2 || vel.a == 7 || vel.a == 4 
+			|| vel.a == 10 || vel.a == 15 || vel.a == 12
+			|| vel.a == 5 || vel.a == 8 )
 			k2Right = vec3(0,0,0);
 		else
 			k2Right = (diff)* ((ndiff - oaB)/ndiff);
@@ -159,7 +168,10 @@ void main(void) {
 		ndiff = normalize(diff);
 		c2Down = vel2Down - velocity;
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 3 || vel.a == 8 || vel.a == 4 
+			|| vel.a == 11 || vel.a == 16 || vel.a == 12
+			|| vel.a == 6 || vel.a == 7 )
 			k2Down = vec3(0,0,0);
 		else
 			k2Down = (diff)* ((ndiff - oaB)/ndiff);
@@ -173,7 +185,10 @@ void main(void) {
 		ndiff = normalize(diff);
 		c2Left = vel2Left - velocity;
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 1 || vel.a == 6 || vel.a == 3 
+			|| vel.a == 9 || vel.a == 14 || vel.a == 11
+			|| vel.a == 8 || vel.a == 5)
 			k2Left = vec3(0,0,0);
 		else
 			k2Left = (diff)* ((ndiff - oaB)/ndiff);		
@@ -188,7 +203,8 @@ void main(void) {
 		ndiff = normalize(diff);
 		cUpRight = velUpRight - velocity;
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 5 || vel.a == 2 || vel.a == 7 || vel.a == 1 || vel.a == 4 )
 			kUpRight = vec3(0,0,0);
 		else
 			kUpRight = (diff)*((ndiff - oaSh) / ndiff);
@@ -202,7 +218,8 @@ void main(void) {
 		diff = posDownRight - position;
 		ndiff = normalize(diff);
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 7 || vel.a == 4 || vel.a == 8 || vel.a == 2 || vel.a == 3 )
 			kDownRight = vec3(0,0,0);
 		else
 			kDownRight = (diff)*((ndiff - oaSh) / ndiff);
@@ -216,7 +233,8 @@ void main(void) {
 		diff = posDownLeft - position;
 		ndiff = normalize(diff);
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 6 || vel.a == 3 || vel.a == 8 || vel.a == 1 || vel.a == 4 )
 			kDownLeft = vec3(0,0,0);
 		else
 			kDownLeft = (diff)*((ndiff - oaSh) / ndiff);
@@ -230,7 +248,8 @@ void main(void) {
 		diff = posUpLeft - position;
 		ndiff = normalize(diff);
 		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0)
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 5 || vel.a == 1 || vel.a == 6 || vel.a == 2 || vel.a == 3 )
 			kUpLeft = vec3(0,0,0);
 		else
 			kUpLeft = (diff)*((ndiff - oaSh) / ndiff);
@@ -238,12 +257,11 @@ void main(void) {
 
 
 		//calculate the new velosity
-		NewVelocity = velocity + (timestep / particleMass)*(particleMass*g + kSt*(kUp +kLeft + kRight + kDown) );// + kSh*(kUpLeft + kUpRight + kDownLeft + kDownRight) + kB*(k2Up + k2Right + k2Down + k2Left) + cSt*(cUp + cLeft + cRight + cDown) + cSh*(cUpLeft + cUpRight + cDownLeft + cDownRight) + cB*(c2Up + c2Right + c2Down + c2Left));
+		NewVelocity = velocity + (timestep / particleMass)*(particleMass*g + kSt*(kUp +kLeft + kRight + kDown) + kSh*(kUpLeft + kUpRight + kDownLeft + kDownRight) + kB*(k2Up + k2Right + k2Down + k2Left) + cSt*(cUp + cLeft + cRight + cDown) + cSh*(cUpLeft + cUpRight + cDownLeft + cDownRight) + cB*(c2Up + c2Right + c2Down + c2Left));
 		//NewVelocity = kUp;
 		vel.r = NewVelocity.r;
 		vel.g = NewVelocity.g;
 		vel.b = NewVelocity.b;
-	}
-
+	
 	Out_Color = vel;
 }
