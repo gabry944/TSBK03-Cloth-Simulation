@@ -6,7 +6,8 @@ in vec2 texCoord;
 uniform sampler2D VelocityOld;
 uniform sampler2D PositionOld;
 
-uniform int nrOfParticlesHorizontally;
+uniform float nrOfParticlesVertically;
+uniform float nrOfParticlesHorizontally;
 uniform float timestep;
 uniform float particleMass;
 uniform vec3 g;
@@ -26,7 +27,9 @@ void main(void) {
  
 	vec2 cord = texCoord;
 	vec4 vel = texture(VelocityOld, cord); 
-	vec4 pos = texture(PositionOld, cord); 
+	vec4 pos = texture(PositionOld, cord);
+		
+	float step =  1/(nrOfParticlesVertically*nrOfParticlesHorizontally); 
 
 	vec3 kUp;
 	vec3 cUp;
@@ -64,10 +67,11 @@ void main(void) {
 	position.b = pos.b;
 
 
-		//streatch spring upwards
-		vec4 temp = texture(PositionOld, cord - nrOfParticlesHorizontally); 
+		//streatch spring upwards		
+		vec2 cord2= vec2(cord.x - step * nrOfParticlesHorizontally, cord.y);
+		vec4 temp = texture(PositionOld, cord2); 
 		vec3 posUp = vec3(temp);
-		temp = texture(VelocityOld, cord - nrOfParticlesHorizontally); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 velUp = vec3(temp);
 		vec3 diff = posUp - position;
 		vec3 ndiff = normalize(diff);
@@ -80,9 +84,10 @@ void main(void) {
 			kUp = (diff)* ((ndiff - oaSt)/ndiff);		
 	
 		//streatch spring to the right
-		temp = texture(PositionOld, cord + 1); 
+		cord2= vec2(cord.x + step , cord.y);
+		temp = texture(PositionOld, cord2); 
 		vec3 posRight = vec3(temp);
-		temp = texture(VelocityOld, cord + 1); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 velRight = vec3(temp);			
 		diff = posRight - position;
 		ndiff = normalize(diff);
@@ -95,9 +100,10 @@ void main(void) {
 			kRight = (diff)* ((ndiff - oaSt)/ndiff);
 		
 		//streatch spring downwards
-		temp = texture(PositionOld, cord + nrOfParticlesHorizontally); 
+		cord2= vec2(cord.x + step * nrOfParticlesHorizontally, cord.y);
+		temp = texture(PositionOld, cord2); 
 		vec3 posDown = vec3(temp);
-		temp = texture(VelocityOld, cord + nrOfParticlesHorizontally); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 velDown = vec3(temp);
 		diff = posDown - position;
 		ndiff = normalize(diff);
@@ -110,9 +116,10 @@ void main(void) {
 			kDown = (diff)* ((ndiff - oaSt)/ndiff);
 		
 		//streatch spring to the left
-		temp = texture(PositionOld, cord - 1); 
+		cord2= vec2(cord.x - step, cord.y);
+		temp = texture(PositionOld, cord2); 
 		vec3 posLeft = vec3(temp);
-		temp = texture(VelocityOld, cord - 1); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 velLeft = vec3(temp);
 		diff = posLeft - position;
 		ndiff = normalize(diff);
@@ -126,9 +133,10 @@ void main(void) {
 		
 
 		//bend spring upwards
-		temp = texture(PositionOld, cord - 2*nrOfParticlesHorizontally); 
+		cord2 = vec2(cord.x - step * 2*nrOfParticlesHorizontally, cord.y);
+		temp = texture(PositionOld, cord2); 
 		vec3 pos2Up = vec3(temp);
-		temp = texture(VelocityOld, cord - 2*nrOfParticlesHorizontally); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 vel2Up = vec3(temp);
 		diff = pos2Up - position;
 		ndiff = normalize(diff);
@@ -143,9 +151,10 @@ void main(void) {
 			k2Up = (diff)* ((ndiff - oaB)/ndiff);
 		
 		//bend spring to the right
-		temp = texture(PositionOld, cord + 2); 
+		cord2= vec2(cord.x + step * 2, cord.y);
+		temp = texture(PositionOld, cord2); 
 		vec3 pos2Right = vec3(temp);
-		temp = texture(VelocityOld, cord + 2); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 vel2Right = vec3(temp);
 		diff = pos2Right - position;
 		ndiff = normalize(diff);
@@ -160,9 +169,10 @@ void main(void) {
 			k2Right = (diff)* ((ndiff - oaB)/ndiff);
 		
 		//bend spring downwards
-		temp = texture(PositionOld, cord + 2*nrOfParticlesHorizontally); 
+		cord2= vec2(cord.x + step * 2*nrOfParticlesHorizontally, cord.y);
+		temp = texture(PositionOld, cord2); 
 		vec3 pos2Down = vec3(temp);
-		temp = texture(VelocityOld, cord + 2*nrOfParticlesHorizontally); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 vel2Down = vec3(temp);
 		diff = pos2Down - position;
 		ndiff = normalize(diff);
@@ -177,9 +187,10 @@ void main(void) {
 			k2Down = (diff)* ((ndiff - oaB)/ndiff);
 
 		//bend spring to the left
-		temp = texture(PositionOld, cord + 2); 
+		cord2= vec2(cord.x - step * 2, cord.y);
+		temp = texture(PositionOld, cord2); 
 		vec3 pos2Left = vec3(temp);
-		temp = texture(VelocityOld, cord + 2); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 vel2Left = vec3(temp);
 		diff = pos2Left - position;
 		ndiff = normalize(diff);
@@ -195,9 +206,10 @@ void main(void) {
 
 		
 		//shear spring to the right and Upwards	
-		temp = texture(PositionOld, cord - nrOfParticlesHorizontally + 1); 
+		cord2= vec2(cord.x - step*nrOfParticlesHorizontally + step, cord.y);
+		temp = texture(PositionOld, cord2); 
 		vec3 posUpRight = vec3(temp);
-		temp = texture(VelocityOld, cord - nrOfParticlesHorizontally + 1); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 velUpRight = vec3(temp);
 		diff = posUpRight - position;
 		ndiff = normalize(diff);
@@ -210,9 +222,10 @@ void main(void) {
 			kUpRight = (diff)*((ndiff - oaSh) / ndiff);
 
 		//shear spring to the right and downwards	
-		temp = texture(PositionOld, cord + nrOfParticlesHorizontally + 1); 
+		cord2= vec2(cord.x + step * nrOfParticlesHorizontally + step, cord.y);
+		temp = texture(PositionOld, cord2); 
 		vec3 posDownRight = vec3(temp);
-		temp = texture(VelocityOld, cord + nrOfParticlesHorizontally + 1); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 velDownRight = vec3(temp);
 		cDownRight = velDownRight - velocity;
 		diff = posDownRight - position;
@@ -223,26 +236,12 @@ void main(void) {
 			kDownRight = vec3(0,0,0);
 		else
 			kDownRight = (diff)*((ndiff - oaSh) / ndiff);
-
-		//shear spring to the left and downwards	
-		temp = texture(PositionOld, cord + nrOfParticlesHorizontally - 1); 
-		vec3 posDownLeft = vec3(temp);
-		temp = texture(VelocityOld, cord + nrOfParticlesHorizontally - 1); 
-		vec3 velDownLeft = vec3(temp);
-		cDownLeft = velDownLeft - velocity;
-		diff = posDownLeft - position;
-		ndiff = normalize(diff);
-		//check for devison by zero and normalisation of zero vector
-		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
-			|| vel.a == 6 || vel.a == 3 || vel.a == 8 || vel.a == 1 || vel.a == 4 )
-			kDownLeft = vec3(0,0,0);
-		else
-			kDownLeft = (diff)*((ndiff - oaSh) / ndiff);
-							
+										
 		//shear spring to the left and Upwards
-		temp = texture(PositionOld, cord - nrOfParticlesHorizontally - 1); 
+		cord2= vec2(cord.x - step * nrOfParticlesHorizontally - step, cord.y);
+		temp = texture(PositionOld, cord2); 
 		vec3 posUpLeft = vec3(temp);
-		temp = texture(VelocityOld, cord - nrOfParticlesHorizontally - 1); 
+		temp = texture(VelocityOld, cord2); 
 		vec3 velUpLeft = vec3(temp);
 		cUpLeft = velUpLeft - velocity;
 		diff = posUpLeft - position;
@@ -253,19 +252,39 @@ void main(void) {
 			kUpLeft = vec3(0,0,0);
 		else
 			kUpLeft = (diff)*((ndiff - oaSh) / ndiff);
+			
+		//shear spring to the left and downwards	
+		cord2= vec2(cord.x + step * (nrOfParticlesHorizontally - 1), cord.y);
+		temp = texture(PositionOld, cord2); 
+		vec3 posDownLeft = vec3(temp);
+		temp = texture(VelocityOld, cord2); 
+		vec3 velDownLeft = vec3(temp);
+		cDownLeft = velDownLeft - velocity;
+		diff = posDownLeft - position;
+		ndiff = normalize(diff);
+		//check for devison by zero and normalisation of zero vector
+		if (diff == vec3(0,0,0) || ndiff.x == 0 || ndiff.y == 0 || ndiff.z == 0
+			|| vel.a == 6 || vel.a == 3 || vel.a == 8 || vel.a == 1 || vel.a == 4 )
+			kDownLeft = vec3(0,0,0);
+		else
+			kDownLeft = (diff)*((ndiff - oaSh) / ndiff);
+
 
 
 	//calculate the new velosity
-	NewVelocity = velocity + (timestep / particleMass)*(particleMass*g + kSt*(kUp +kLeft + kRight + kDown) + kSh*(kUpLeft + kUpRight + kDownLeft + kDownRight) + kB*(k2Up + k2Right + k2Down + k2Left) + cSt*(cUp + cLeft + cRight + cDown) + cSh*(cUpLeft + cUpRight + cDownLeft + cDownRight) + cB*(c2Up + c2Right + c2Down + c2Left));
+	NewVelocity = velocity + (timestep / particleMass) * (particleMass*g + kSt*(kUp +kLeft + kRight + kDown) + kSh*(kUpLeft + kUpRight + kDownLeft + kDownRight) + kB*(k2Up + k2Right + k2Down + k2Left) + cSt*(cUp + cLeft + cRight + cDown) + cSh*(cUpLeft + cUpRight + cDownLeft + cDownRight) + cB*(c2Up + c2Right + c2Down + c2Left));
+	//NewVelocity = kDown;
 	vel.r = NewVelocity.r;
 	vel.g = NewVelocity.g;
 	vel.b = NewVelocity.b;
 
 	if(vel.a == 3 || vel.a == 4 )
 	{
-		vel.r = 0;
-		vel.g = 0;
-		vel.b = 0;
+		vel.r = cord2.x;
+		vel.g = cord.x;
+		vel.b = step;
+		//vel.b = nrOfParticlesVertically; 
+		//1/(nrOfParticlesVertically*nrOfParticlesHorizontally); 
 	}
 	Out_Color = vel;
 }

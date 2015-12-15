@@ -186,7 +186,10 @@ int main(void) {
 	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
 	{
 		cout << "facit: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};
+	}; 
+	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
+
+
 
 	//initGPGPU(particles, particle_old, velocity, velocity_old, fboPos1, fboPos2, fboVel1, fboVel2);
 	/*fboPos1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);
@@ -233,7 +236,7 @@ int main(void) {
 		drawTriangles(particles, phongShader, RenderShader);
 		for (int skipp = 0; skipp < 12; skipp++){// to enhance preformanse since movment in one timestep is so smale that we dont need to draw every timestep.
 			Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position
-			//calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos1, fboPos2, fboVel1, fboVel2);
+			//calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
 		}
 
 		// Swap buffers
