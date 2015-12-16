@@ -70,12 +70,12 @@ void main(void) {
 		//streatch spring upwards		
 		vec2 cord2= vec2(cord.x - step * nrOfParticlesHorizontally, cord.y);
 		vec4 temp = texture(PositionOld, cord2); 
-		vec3 posUp = vec3(temp);
+		vec3 posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 velUp = vec3(temp);
-		vec3 diff = posUp - position;
+		vec3 velTemp = vec3(temp);
+		cUp = velTemp - velocity;	
+		vec3 diff = posTemp - position;
 		float ndiff =abs(length(diff));
-		cUp = velUp - velocity;	
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 1 || vel.a == 5 || vel.a == 2)
@@ -86,12 +86,12 @@ void main(void) {
 		//streatch spring to the right
 		cord2= vec2(cord.x + step , cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 posRight = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 velRight = vec3(temp);			
-		diff = posRight - position;
+		velTemp = vec3(temp);			
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
-		cRight = velRight - velocity;
+		cRight = velTemp - velocity;
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 2 || vel.a == 7 || vel.a == 4)
@@ -102,12 +102,12 @@ void main(void) {
 		//streatch spring downwards
 		cord2= vec2(cord.x + step * nrOfParticlesHorizontally, cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 posDown = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 velDown = vec3(temp);
-		diff = posDown - position;
+		velTemp = vec3(temp);
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
-		cDown = velDown - velocity;
+		cDown = velTemp - velocity;
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 3 || vel.a == 8 || vel.a == 4)
@@ -118,12 +118,12 @@ void main(void) {
 		//streatch spring to the left
 		cord2= vec2(cord.x - step, cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 posLeft = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 velLeft = vec3(temp);
-		diff = posLeft - position;
+		velTemp = vec3(temp);
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
-		cLeft = velLeft - velocity;
+		cLeft = velTemp - velocity;
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 1 || vel.a == 6 || vel.a == 3)
@@ -135,12 +135,12 @@ void main(void) {
 		//bend spring upwards
 		cord2 = vec2(cord.x - step * 2*nrOfParticlesHorizontally, cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 pos2Up = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 vel2Up = vec3(temp);
-		diff = pos2Up - position;
+		velTemp = vec3(temp);
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
-		c2Up = vel2Up - velocity;	
+		c2Up = velTemp - velocity;	
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 1 || vel.a == 5 || vel.a == 2 
@@ -153,12 +153,12 @@ void main(void) {
 		//bend spring to the right
 		cord2= vec2(cord.x + step * 2, cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 pos2Right = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 vel2Right = vec3(temp);
-		diff = pos2Right - position;
+		velTemp = vec3(temp);
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
-		c2Right = vel2Right - velocity;
+		c2Right = velTemp - velocity;
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 2 || vel.a == 7 || vel.a == 4 
@@ -171,12 +171,12 @@ void main(void) {
 		//bend spring downwards
 		cord2= vec2(cord.x + step * 2*nrOfParticlesHorizontally, cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 pos2Down = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 vel2Down = vec3(temp);
-		diff = pos2Down - position;
+		velTemp = vec3(temp);
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
-		c2Down = vel2Down - velocity;
+		c2Down = velTemp - velocity;
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 3 || vel.a == 8 || vel.a == 4 
@@ -189,12 +189,12 @@ void main(void) {
 		//bend spring to the left
 		cord2= vec2(cord.x - step * 2, cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 pos2Left = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 vel2Left = vec3(temp);
-		diff = pos2Left - position;
+		velTemp = vec3(temp);
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
-		c2Left = vel2Left - velocity;
+		c2Left = velTemp - velocity;
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 1 || vel.a == 6 || vel.a == 3 
@@ -208,12 +208,12 @@ void main(void) {
 		//shear spring to the right and Upwards	
 		cord2= vec2(cord.x - step * (nrOfParticlesHorizontally - 1), cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 posUpRight = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 velUpRight = vec3(temp);
-		diff = posUpRight - position;
+		velTemp = vec3(temp);
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
-		cUpRight = velUpRight - velocity;
+		cUpRight = velTemp - velocity;
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 5 || vel.a == 2 || vel.a == 7 || vel.a == 1 || vel.a == 4 )
@@ -224,11 +224,11 @@ void main(void) {
 		//shear spring to the right and downwards	
 		cord2= vec2(cord.x + step * (nrOfParticlesHorizontally + 1), cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 posDownRight = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 velDownRight = vec3(temp);
-		cDownRight = velDownRight - velocity;
-		diff = posDownRight - position;
+		velTemp = vec3(temp);
+		cDownRight = velTemp - velocity;
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
@@ -240,11 +240,11 @@ void main(void) {
 		//shear spring to the left and Upwards
 		cord2= vec2(cord.x - step * (nrOfParticlesHorizontally + 1), cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 posUpLeft = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 velUpLeft = vec3(temp);
-		cUpLeft = velUpLeft - velocity;
-		diff = posUpLeft - position;
+		velTemp = vec3(temp);
+		cUpLeft = velTemp - velocity;
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
@@ -256,11 +256,11 @@ void main(void) {
 		//shear spring to the left and downwards	
 		cord2= vec2(cord.x + step * (nrOfParticlesHorizontally - 1), cord.y);
 		temp = texture(PositionOld, cord2); 
-		vec3 posDownLeft = vec3(temp);
+		posTemp = vec3(temp);
 		temp = texture(VelocityOld, cord2); 
-		vec3 velDownLeft = vec3(temp);
-		cDownLeft = velDownLeft - velocity;
-		diff = posDownLeft - position;
+		velTemp = vec3(temp);
+		cDownLeft = velTemp - velocity;
+		diff = posTemp - position;
 		ndiff =abs(length(diff));
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
@@ -269,10 +269,6 @@ void main(void) {
 		else
 			kDownLeft = (diff)*((ndiff - oaSh) / ndiff);
 
-
-			
-		diff = posDown - position;
-		ndiff =abs(length(diff));
 
 	//calculate the new velosity
 	NewVelocity = velocity + (timestep / particleMass) * (particleMass*g + kSt*(kUp +kLeft + kRight + kDown) + kSh*(kUpLeft + kUpRight + kDownLeft + kDownRight) + kB*(k2Up + k2Right + k2Down + k2Left) + cSt*(cUp + cLeft + cRight + cDown) + cSh*(cUpLeft + cUpRight + cDownLeft + cDownRight) + cB*(c2Up + c2Right + c2Down + c2Left));
@@ -283,11 +279,6 @@ void main(void) {
 
 	if(vel.a == 3 || vel.a == 4 )
 	{
-		//vel.r = cord2.x;
-		//vel.g = cord.x;
-		//vel.b = step;
-		//vel.b = nrOfParticlesVertically; 
-		//1/(nrOfParticlesVertically*nrOfParticlesHorizontally); 
 		vel.r = 0;
 		vel.g = 0;
 		vel.b = 0;
