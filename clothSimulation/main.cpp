@@ -292,22 +292,23 @@ int main(void) {
 		float ratio = width / (float)height;
 		glViewport(0, 0, width, height);
 
-		glClearColor(0.0, 0.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		/*glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
 
 		//checkMouseButtons(window, width, height, particles, particleInStatic, staticParticles, pressed, selectedParticlePos); // check if a mouse is pressed
-
-		//draw here
-		drawTriangles(particles, phongShader, RenderShader);
+		
+		calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
 		for (int skipp = 0; skipp < 12; skipp++){// to enhance preformanse since movment in one timestep is so smale that we dont need to draw every timestep.
 			//calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
-			Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position			
+			//Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position			
 		}
+		//draw here
+		drawTriangles(particles, phongShader, RenderShader);
 		//calculateNextPos(particles, fboPos, fboOldPos, fboVel, fboOldVel);
 		//cout << "hej \n";
-		/*cout << "punkt 1: " << particles.at(0).x << " " << particles.at(0).y << " " << particles.at(0).z << endl;
-		cout << "punkt 7: " << particles.at(6).x << " " << particles.at(6).y << " " << particles.at(6).z << endl;
-		cout << "punkt 27: " << particles.at(26).x << " " << particles.at(26).y << " " << particles.at(26).z << endl;*/
+		//cout << "punkt 1: " << particles.at(0).x << " " << particles.at(0).y << " " << particles.at(0).z << endl;
+		//cout << "punkt 7: " << particles.at(6).x << " " << particles.at(6).y << " " << particles.at(6).z << endl;
+		//cout << "punkt 27: " << particles.at(26).x << " " << particles.at(26).y << " " << particles.at(26).z << endl;
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -438,6 +439,7 @@ void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint Rende
 		}
 	}
 
+	
 	// generate and bind buffer for clothVertices
 	glGenBuffers(1, &vbo_cloth_vertices);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_cloth_vertices);
@@ -445,6 +447,8 @@ void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint Rende
 
 	// generate and bind buffer for clothElements
 	glGenBuffers(1, &ibo_cloth_elements);
+	/*glBindBuffer(GL_ARRAY_BUFFER, ibo_cloth_elements);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(clothElements), clothElements, GL_STATIC_DRAW);*/
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cloth_elements);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(clothElements), clothElements, GL_STATIC_DRAW);
 
@@ -453,7 +457,7 @@ void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint Rende
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_cloth_colors);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(clothColors), clothColors, GL_STATIC_DRAW);
 
-	glUseProgram(phongShader.programID);
+	glUseProgram(phongShader.programID);//???
 
 	// calculate the global transform matrix
 	glm::mat4 mvp = frustum * view;
@@ -470,6 +474,10 @@ void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint Rende
 	glVertexAttribPointer(attribute_v_color, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	// bind buffer and draw
+	/*glBindBuffer(GL_ARRAY_BUFFER, ibo_cloth_elements); 
+	int size;
+	glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size); // use glGetBufferParameteriv to get the buffer size
+	glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);*/
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cloth_elements);
 	int size;
 	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size); // use glGetBufferParameteriv to get the buffer size
@@ -479,6 +487,7 @@ void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint Rende
 	glDisableVertexAttribArray(attribute_coord3d);
 	glDisableVertexAttribArray(attribute_v_color);
 	glDeleteBuffers(1, &ibo_cloth_elements);
+	
 }
 
 //	Check if either left or right mousebuttons are pressed down

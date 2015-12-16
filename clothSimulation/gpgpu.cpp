@@ -153,6 +153,7 @@ void calculateNextPos2(vector<glm::vec3> &particle, FBOstruct *fboPos, FBOstruct
 	{
 		cout << "PassPosition: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
 	}*/
+	ReloadModelData(squareModel);
 
 	//update velosity
 	glUseProgram(velocityEulerShader);

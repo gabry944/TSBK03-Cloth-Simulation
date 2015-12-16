@@ -47,6 +47,7 @@ typedef struct
 } Model;
 
 void DrawModel(Model *m, GLuint program, char* vertexVariableName, char* normalVariableName, char* texCoordVariableName);
+void ReloadModelData(Model *m);
 Model* LoadDataToModel(
 	GLfloat *vertices,
 	GLfloat *normals,
