@@ -71,7 +71,7 @@ int main(void) {
 	/*****************************
 	 * Declare the GPGPU Shader  *
 	 *****************************/
-	GLuint EulerShader;
+	//GLuint EulerShader;
 	GLuint RenderShader;
 	FBOstruct *fboPos, *fboOldPos, *fboVel, *fboOldVel;
 	//const int W = 16, H = 16;
@@ -122,8 +122,27 @@ int main(void) {
 	/****************************
 	 * Create the GPGPU Shader  *
 	 ****************************/
-	EulerShader = loadShaders("Shaders/eulerVertexShader.glsl", "Shaders/eulerFragmentShader.glsl");
+	//EulerShader = loadShaders("Shaders/eulerVertexShader.glsl", "Shaders/eulerFragmentShader.glsl");
 	RenderShader = loadShaders("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
+
+	// en enkel fyrkant att rita på
+	GLfloat square[] = { -1, -1, 0,
+		-1, 1, 0,
+		1, 1, 0,
+		1, -1, 0 };
+	GLfloat squareTexCoord[] = { 0, 0,
+		0, 1,
+		1, 1,
+		1, 0 };
+	GLuint squareIndices[] = { 0, 1, 2, 0, 2, 3 };
+	Model* squareModel = LoadDataToModel(
+		square, NULL, squareTexCoord, NULL,
+		squareIndices, 4, 6);
+
+	GLuint velocityEulerShader = loadShaders("Shaders/velocityEulerVertexShader.glsl", "Shaders/velocityEulerFragmentShader.glsl");
+	GLuint pass = loadShaders("Shaders/passVertexShader.glsl", "Shaders/passFragmentShader.glsl");
+	GLuint PositionEulerShader = loadShaders("Shaders/positionEulerVertexShader.glsl", "Shaders/positionEulerFragmentShader.glsl");
+
 
 	// Particle texture(Array)
 	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;//particle.SIZE() * 3;
@@ -175,28 +194,48 @@ int main(void) {
 	fboOldVel = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldVelocityPixels);
 
 	initGPGPU(fboPos, fboOldPos, fboVel, fboOldVel);
-	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
-	Euler(particles, particle_old, velocity, velocity_old, staticParticles);
+	/*calculateNextPos(particles, fboPos, fboOldPos, fboVel, fboOldVel, velocityEulerShader, pass, PositionEulerShader);
 	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
 	{
-		cout << "facit: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+		cout << "GPU0: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
 	};
-	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
 	Euler(particles, particle_old, velocity, velocity_old, staticParticles);
 	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
 	{
-		cout << "facit: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	}; 
-	calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
+		cout << "CPU0: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+	};*/
+	calculateNextPos(particles, fboPos, fboOldPos, fboVel, fboOldVel, velocityEulerShader, pass, PositionEulerShader);
+	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
+	{
+		cout << "GPU1: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+	};
+	
+	/*Euler(particles, particle_old, velocity, velocity_old, staticParticles);
+	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
+	{
+		cout << "CPU1: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+	}; */
+	
+	calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
+	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
+	{
+		cout << "GPU2: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+	};
+	/*calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
+	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
+	{
+		cout << "GPU3: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+	};
+	for (int f = 0; f < 10; f++)
+	{
+		calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
+	}
+	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
+	{
+		cout << "GPU efter 10: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+	};*/
 
-
-
-	//initGPGPU(particles, particle_old, velocity, velocity_old, fboPos1, fboPos2, fboVel1, fboVel2);
-	/*fboPos1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);
-	fboPos2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);
-	fboVel1 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);
-	fboVel2 = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0);*/
-
+	
 	glEnable(GL_DEPTH_TEST);
 
 	attribute_coord3d = glGetAttribLocation(phongShader.programID, "coord3d");
@@ -217,6 +256,32 @@ int main(void) {
 		return 0;
 	}
 
+	calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
+	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
+	{
+		cout << "GPU innan rita: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+	};
+	if (true)
+	{
+		int width, height;
+
+		//set up viewport
+		glfwGetFramebufferSize(window, &width, &height);
+		float ratio = width / (float)height;
+		glViewport(0, 0, width, height);
+
+		/*glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
+
+		//draw here
+		drawTriangles(particles, phongShader, RenderShader);
+	}
+	calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
+	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
+	{
+		cout << "GPU efter rita: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+	};
+
 	// run untill window should close
 	while (!glfwWindowShouldClose(window)) {
 
@@ -235,9 +300,14 @@ int main(void) {
 		//draw here
 		drawTriangles(particles, phongShader, RenderShader);
 		for (int skipp = 0; skipp < 12; skipp++){// to enhance preformanse since movment in one timestep is so smale that we dont need to draw every timestep.
-			Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position
-			//calculateNextPos(particles, particle_old, velocity, velocity_old, staticParticles, EulerShader, fboPos, fboOldPos, fboVel, fboOldVel);
+			//calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
+			Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position			
 		}
+		//calculateNextPos(particles, fboPos, fboOldPos, fboVel, fboOldVel);
+		//cout << "hej \n";
+		/*cout << "punkt 1: " << particles.at(0).x << " " << particles.at(0).y << " " << particles.at(0).z << endl;
+		cout << "punkt 7: " << particles.at(6).x << " " << particles.at(6).y << " " << particles.at(6).z << endl;
+		cout << "punkt 27: " << particles.at(26).x << " " << particles.at(26).y << " " << particles.at(26).z << endl;*/
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -266,10 +336,10 @@ static void error_callback (int error, const char* description) {
 // Function for drawing the cloth
 void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint RenderShader) {
 
+	glUseProgram(RenderShader);
 	useFBO(0L, 0L, 0L);
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(RenderShader);
 	
 	GLuint ibo_cloth_elements;
 	GLuint vbo_cloth_vertices, vbo_cloth_colors;

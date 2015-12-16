@@ -280,11 +280,14 @@ void main(void) {
 
 	if(vel.a == 3 || vel.a == 4 )
 	{
-		vel.r = cord2.x;
-		vel.g = cord.x;
-		vel.b = step;
+		//vel.r = cord2.x;
+		//vel.g = cord.x;
+		//vel.b = step;
 		//vel.b = nrOfParticlesVertically; 
 		//1/(nrOfParticlesVertically*nrOfParticlesHorizontally); 
+		vel.r = 0;
+		vel.g = 0;
+		vel.b = 0;
 	}
 	Out_Color = vel;
 }

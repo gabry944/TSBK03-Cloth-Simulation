@@ -405,21 +405,19 @@ void use2FBO(FBOstruct *out, FBOstruct *in1, FBOstruct *in2, GLuint program)
 	glActiveTexture(GL_TEXTURE1);
 	if (in2 != 0L)
 	{
-		fprintf(stderr, "\n PROGRAM : %d \n", program);
-		fprintf(stderr, " positionPosition : %d \n", positionPosition);
+		//fprintf(stderr, "\n PROGRAM : %d \n", program);
+		//fprintf(stderr, " positionPosition : %d \n", positionPosition);
 		glBindTexture(GL_TEXTURE_2D, in2->texid);
 		glUniform1i(positionPosition, 1);
-		//fprintf(stderr, "\n tex2(position) binded id: %d \n", in2->texid);
 	}
 	else
 		glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
 	if (in1 != 0L){
-		fprintf(stderr, "\n PROGRAM : %d \n", program);
-		fprintf(stderr, " velocityPosition : %d \n", velocityPosition);
+		//fprintf(stderr, "\n PROGRAM : %d \n", program);
+		//fprintf(stderr, " velocityPosition : %d \n", velocityPosition);
 		glUniform1i(velocityPosition, 0); // det är defalt till 0 :)
 		glBindTexture(GL_TEXTURE_2D, in1->texid);
-		//fprintf(stderr, "\n tex1(velocity) binded id: %d \n", in1->texid);
 	}
 	else
 		glBindTexture(GL_TEXTURE_2D, 0);
