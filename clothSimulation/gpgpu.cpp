@@ -19,31 +19,31 @@ void calculateNextPos(vector<glm::vec3> &particle, FBOstruct *fboPos, FBOstruct 
 		square, NULL, squareTexCoord, NULL,
 		squareIndices, 4, 6);
 
-	/*
-	GLuint velocityEulerShader = loadShaders("Shaders/velocityEulerVertexShader.glsl", "Shaders/velocityEulerFragmentShaderTest.glsl");
-	glUseProgram(velocityEulerShader);
+	
+	GLuint velocityEulerShaderTest = loadShaders("Shaders/velocityEulerVertexShader.glsl", "Shaders/velocityEulerFragmentShaderTest.glsl");
+	glUseProgram(velocityEulerShaderTest);
 
-	use2FBO(fboVel, fboOldVel, fboOldPos, velocityEulerShader);
+	use2FBO(fboVel, fboOldVel, fboOldPos, velocityEulerShaderTest);
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//send shared varible to shader // behövdes inte göras i render lopen har jag för mig
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "nrOfParticlesVertically"), nrOfParticlesVertically);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "nrOfParticlesHorizontally"), nrOfParticlesHorizontally);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "timestep"), timestep);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "particleMass"), particleMass);
-	glUniform3f(glGetUniformLocation(velocityEulerShader, "g"), g.x, g.y, g.z);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "kSt"), kSt);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "kSh"), kSh);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "kB"), kB);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "oaSt"), oaSt);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "oaSh"), oaSh);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "oaB"), oaB);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "cSt"), cSt);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "cSh"), cSh);
-	glUniform1f(glGetUniformLocation(velocityEulerShader, "cB"), cB);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "nrOfParticlesVertically"), nrOfParticlesVertically);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "nrOfParticlesHorizontally"), nrOfParticlesHorizontally);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "timestep"), timestep);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "particleMass"), particleMass);
+	glUniform3f(glGetUniformLocation(velocityEulerShaderTest, "g"), g.x, g.y, g.z);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "kSt"), kSt);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "kSh"), kSh);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "kB"), kB);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "oaSt"), oaSt);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "oaSh"), oaSh);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "oaB"), oaB);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "cSt"), cSt);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "cSh"), cSh);
+	glUniform1f(glGetUniformLocation(velocityEulerShaderTest, "cB"), cB);
 
-	DrawModel(squareModel, velocityEulerShader, "in_Position", NULL, "in_TexCoord");
+	DrawModel(squareModel, velocityEulerShaderTest, "in_Position", NULL, "in_TexCoord");
 
 	//test so everything went fine
 	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
@@ -51,9 +51,9 @@ void calculateNextPos(vector<glm::vec3> &particle, FBOstruct *fboPos, FBOstruct 
 	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
 	for (int j = 0; j < SIZE; j += 4)
 	{
-		//cout << "EulerShaderTest: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
+		cout << "EulerShaderTest: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
 	}
-	*/
+	
 	//GLuint velocityEulerShader = loadShaders("Shaders/velocityEulerVertexShader.glsl", "Shaders/velocityEulerFragmentShader.glsl");
 	glUseProgram(velocityEulerShader);
 
@@ -80,8 +80,8 @@ void calculateNextPos(vector<glm::vec3> &particle, FBOstruct *fboPos, FBOstruct 
 	DrawModel(squareModel, velocityEulerShader, "in_Position", NULL, "in_TexCoord");
 
 	//test so everything went fine
-	const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
-	float particlePixels[SIZE];
+	//const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
+	//float particlePixels[SIZE];
 	/*glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
 	for (int j = 0; j < SIZE; j += 4)
 	{
@@ -161,7 +161,15 @@ void calculateNextPos2(vector<glm::vec3> &particle, FBOstruct *fboPos, FBOstruct
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 	DrawModel(squareModel, velocityEulerShader, "in_Position", NULL, "in_TexCoord");
-	
+	//test
+	/*const size_t SIZE = nrOfParticlesVertically*nrOfParticlesHorizontally * 4;
+	float particlePixels[SIZE];
+	glReadPixels(0, 0, nrOfParticlesVertically*nrOfParticlesHorizontally, 1, GL_RGBA, GL_FLOAT, particlePixels);
+	for (int j = 0; j < SIZE; j += 4)
+	{
+		cout << "test velocity: " << particlePixels[j] << "  " << particlePixels[j + 1] << "  " << particlePixels[j + 2] << "  " << particlePixels[j + 3] << endl;
+	}*/
+
 	//update old velosity
 	glUseProgram(pass);
 	useFBO(fboOldVel, fboVel, 0L); //MÅSTE VARA PÅ VÄNSTER SIDA!!!!!

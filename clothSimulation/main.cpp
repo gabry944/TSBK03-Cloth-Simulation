@@ -282,6 +282,11 @@ int main(void) {
 		cout << "GPU efter rita: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
 	};
 
+	calculateNextPos(particles, fboPos, fboOldPos, fboVel, fboOldVel, velocityEulerShader, pass, PositionEulerShader);
+	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
+	{
+		cout << "gpu efter test " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
+	};
 	// run untill window should close
 	while (!glfwWindowShouldClose(window)) {
 
@@ -297,7 +302,7 @@ int main(void) {
 
 		//checkMouseButtons(window, width, height, particles, particleInStatic, staticParticles, pressed, selectedParticlePos); // check if a mouse is pressed
 		
-		calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
+		//calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
 		for (int skipp = 0; skipp < 12; skipp++){// to enhance preformanse since movment in one timestep is so smale that we dont need to draw every timestep.
 			//calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
 			//Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position			
