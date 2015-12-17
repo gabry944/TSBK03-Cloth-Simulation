@@ -1,4 +1,5 @@
 ﻿#include "Helper.h"
+#include <chrono>//tidsmätning
 
 /*************************
 * Use the GPGPU Shader  *

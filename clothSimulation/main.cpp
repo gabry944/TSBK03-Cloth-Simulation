@@ -10,7 +10,6 @@
 #include "Shader.h"
 #include "FindClosestNeighbor.h"
 
-
 #include "gpgpu.cpp"
 
 using namespace glm;
@@ -79,8 +78,10 @@ int main(void) {
 
 	glfwSetErrorCallback(error_callback);
 
+	int testGlfw = glfwInit();
+	std::cout << testGlfw;
 	// Initialise GLFW
-	if (!glfwInit())
+	if (!testGlfw)
 		exit(EXIT_FAILURE);
 
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); // window not resizable
@@ -152,21 +153,6 @@ int main(void) {
 	float oldVelocityPixels[SIZE];
 	for (int i = 0, j = 0; i < particles.size() && j < SIZE; i++, j += 4)
 	{
-		/*particlePixels[j] = particles.at(i).x;
-		particlePixels[j + 1] = particles.at(i).y;
-		particlePixels[j + 2] = particles.at(i).z;
-
-		oldParticlePixels[j] = particle_old.at(i).x;
-		oldParticlePixels[j + 1] = particle_old.at(i).y;
-		oldParticlePixels[j + 2] = particle_old.at(i).z;
-
-		velocityPixels[j] = velocity.at(i).x;
-		velocityPixels[j + 1] = velocity.at(i).y;
-		velocityPixels[j + 2] = velocity.at(i).z;
-
-		oldVelocityPixels[j] = velocity_old.at(i).x;
-		oldVelocityPixels[j + 1] = velocity_old.at(i).y;
-		oldVelocityPixels[j + 2] = velocity_old.at(i).z;*/
 		particlePixels[j] = 3;
 		particlePixels[j + 1] = 3;
 		particlePixels[j + 2] = 3;
@@ -195,47 +181,8 @@ int main(void) {
 
 	initGPGPU(fboPos, fboOldPos, fboVel, fboOldVel);
 	calculateNextPos(particles, fboPos, fboOldPos, fboVel, fboOldVel, velocityEulerShader, pass, PositionEulerShader);
-	/*for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
-	{
-		cout << "GPU0: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};
-	Euler(particles, particle_old, velocity, velocity_old, staticParticles);
-	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
-	{
-		cout << "CPU0: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};
-	calculateNextPos(particles, fboPos, fboOldPos, fboVel, fboOldVel, velocityEulerShader, pass, PositionEulerShader);
-	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
-	{
-		cout << "GPU1: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};
 	
-	Euler(particles, particle_old, velocity, velocity_old, staticParticles);
-	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
-	{
-		cout << "CPU1: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};
-	
-	calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
-	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
-	{
-		cout << "GPU2: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};
-	calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
-	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
-	{
-		cout << "GPU3: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};
-	for (int f = 0; f < 10; f++)
-	{
-		calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
-	}
-	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
-	{
-		cout << "GPU efter 10: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};*/
-
-	
+		
 	glEnable(GL_DEPTH_TEST);
 
 	attribute_coord3d = glGetAttribLocation(phongShader.programID, "coord3d");
@@ -256,44 +203,25 @@ int main(void) {
 		return 0;
 	}
 
-	/*calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
-	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
-	{
-		cout << "GPU innan rita: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};
-	if (true)
-	{
-		int width, height;
-
-		//set up viewport
-		glfwGetFramebufferSize(window, &width, &height);
-		float ratio = width / (float)height;
-		glViewport(0, 0, width, height);
-
-		//draw here
-		drawTriangles(particles, phongShader, RenderShader);
-	}
-	calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
-	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
-	{
-		cout << "GPU efter rita: " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};
-
-	/*calculateNextPos(particles, fboPos, fboOldPos, fboVel, fboOldVel, velocityEulerShader, pass, PositionEulerShader);
-	for (int i = 0, j = 0; i < particles.size(); i++, j += 4)
-	{
-		cout << "gpu efter test " << particles.at(i).x << " " << particles.at(i).y << " " << particles.at(i).z << endl;
-	};*/
 	// run untill window should close
 	while (!glfwWindowShouldClose(window)) {
 		
 		//checkMouseButtons(window, width, height, particles, particleInStatic, staticParticles, pressed, selectedParticlePos); // check if a mouse is pressed
-
+		std::chrono::time_point<std::chrono::system_clock> start, end;
+		start = std::chrono::high_resolution_clock::now();
+		unsigned __int64 Iinnan;
+		Iinnan = __rdtsc();
 		//calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
 		for (int skipp = 0; skipp < 12; skipp++){// to enhance preformanse since movment in one timestep is so smale that we dont need to draw every timestep.
 			calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
 			//Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position			
 		}
+		end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> elapsed_seconds = end - start;
+		unsigned __int64 Iefter;
+		Iefter = __rdtsc();
+
+		//std::cout << elapsed_seconds.count() << " seconds"<< std::endl;
 
 		int width, height;
 
@@ -308,6 +236,7 @@ int main(void) {
 		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
 	}
 
 	glfwDestroyWindow(window);

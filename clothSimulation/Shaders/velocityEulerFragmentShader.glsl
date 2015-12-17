@@ -144,8 +144,7 @@ void main(void) {
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 1 || vel.a == 5 || vel.a == 2 
-			|| vel.a == 9 || vel.a == 13 || vel.a == 10
-			|| vel.a == 6 || vel.a == 7 )
+			|| cord.x - (2*nrOfParticlesHorizontally-1)*step< step )
 			k2Up = vec3(0,0,0);
 		else
 			k2Up = (diff)* ((ndiff - oaB)/ndiff);
@@ -162,8 +161,7 @@ void main(void) {
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 2 || vel.a == 7 || vel.a == 4 
-			|| vel.a == 10 || vel.a == 15 || vel.a == 12
-			|| vel.a == 5 || vel.a == 8 )
+			|| mod(cord.x+2*step,nrOfParticlesHorizontally*step) < step)
 			k2Right = vec3(0,0,0);
 		else
 			k2Right = (diff)* ((ndiff - oaB)/ndiff);
@@ -180,8 +178,7 @@ void main(void) {
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 3 || vel.a == 8 || vel.a == 4 
-			|| vel.a == 11 || vel.a == 16 || vel.a == 12
-			|| vel.a == 6 || vel.a == 7 )
+			|| 1 - step*2*nrOfParticlesHorizontally < cord.x)
 			k2Down = vec3(0,0,0);
 		else
 			k2Down = (diff)* ((ndiff - oaB)/ndiff);
@@ -198,8 +195,7 @@ void main(void) {
 		//check for devison by zero and normalisation of zero vector
 		if (diff == vec3(0,0,0) || ndiff == 0
 			|| vel.a == 1 || vel.a == 6 || vel.a == 3 
-			|| vel.a == 9 || vel.a == 14 || vel.a == 11
-			|| vel.a == 8 || vel.a == 5)
+			|| mod(cord.x-step,nrOfParticlesHorizontally*step) < step)
 			k2Left = vec3(0,0,0);
 		else
 			k2Left = (diff)* ((ndiff - oaB)/ndiff);		
