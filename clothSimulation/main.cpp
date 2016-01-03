@@ -20,7 +20,7 @@ using namespace glm;
 void calculateNextPos(vector<glm::vec3> &particle, vector<glm::vec3> &particle_old, vector<glm::vec3> &velocity, vector<glm::vec3> &velocity_old, vector<int> staticParticles, GLuint EulerShader, FBOstruct *fbo1, FBOstruct *fbo2, int W, int H);
 static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mods);
 static void error_callback (int error, const char* description);
-void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint RenderShader);
+void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint RenderShader, GLFWwindow* window);
 void checkMouseButtons(GLFWwindow* window, int height, int width, vector<glm::vec3> &particles, bool &particleInStatic, vector<int> &staticParticles, bool &pressed, int &selectedParticlePos);
 void convertMouseCordToOpenGLCord(double &mousePosX, double &mousePosY, int width, int height);
 vec3 newPos(float oldZ, float mousePosX, float mousePosY, vec3 cameraPos, int clipingPlaneNear);
@@ -67,14 +67,15 @@ int main(void) {
 	GLint attribute_coord3d;
 
 	Shader phongShader;
+
 	/*****************************
 	 * Declare the GPGPU Shader  *
 	 *****************************/
-	//GLuint EulerShader;
 	GLuint RenderShader;
 	FBOstruct *fboPos, *fboOldPos, *fboVel, *fboOldVel;
-	//const int W = 16, H = 16;
-
+	
+	// time funktions
+	std::chrono::time_point<std::chrono::system_clock> start, end;
 
 	glfwSetErrorCallback(error_callback);
 
@@ -123,7 +124,6 @@ int main(void) {
 	/****************************
 	 * Create the GPGPU Shader  *
 	 ****************************/
-	//EulerShader = loadShaders("Shaders/eulerVertexShader.glsl", "Shaders/eulerFragmentShader.glsl");
 	RenderShader = loadShaders("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
 
 	// en enkel fyrkant att rita på
@@ -151,35 +151,15 @@ int main(void) {
 	float oldParticlePixels[SIZE];
 	float velocityPixels[SIZE];
 	float oldVelocityPixels[SIZE];
-	for (int i = 0, j = 0; i < particles.size() && j < SIZE; i++, j += 4)
-	{
-		particlePixels[j] = 3;
-		particlePixels[j + 1] = 3;
-		particlePixels[j + 2] = 3;
-		particlePixels[j + 3] = 3;
-
-		oldParticlePixels[j] = 4;
-		oldParticlePixels[j + 1] = 4;
-		oldParticlePixels[j + 2] = 4;
-		oldParticlePixels[j + 3] = 4;
-
-
-		velocityPixels[j] = 5;
-		velocityPixels[j + 1] = 5;
-		velocityPixels[j + 2] = 5;
-		velocityPixels[j + 3] = 5;
-
-		oldVelocityPixels[j] = 7;
-		oldVelocityPixels[j + 1] = 7;
-		oldVelocityPixels[j + 2] = 7;
-		oldVelocityPixels[j + 3] = 7;
-	};
+	
 	fboPos = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, particlePixels);
 	fboOldPos = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldParticlePixels);
 	fboVel = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, velocityPixels);
 	fboOldVel = initFBO(nrOfParticlesHorizontally, nrOfParticlesVertically, 0, oldVelocityPixels);
 
+	// set the initial state of the texture
 	initGPGPU(fboPos, fboOldPos, fboVel, fboOldVel);
+	// first round in gpgpu, need to link shared variables. 
 	calculateNextPos(particles, fboPos, fboOldPos, fboVel, fboOldVel, velocityEulerShader, pass, PositionEulerShader);
 	
 		
@@ -205,37 +185,18 @@ int main(void) {
 
 	// run untill window should close
 	while (!glfwWindowShouldClose(window)) {
-		
-		//checkMouseButtons(window, width, height, particles, particleInStatic, staticParticles, pressed, selectedParticlePos); // check if a mouse is pressed
-		std::chrono::time_point<std::chrono::system_clock> start, end;
-		start = std::chrono::high_resolution_clock::now();
-		unsigned __int64 Iinnan;
-		Iinnan = __rdtsc();
-		//calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
+
+		//start = std::chrono::high_resolution_clock::now();
 		for (int skipp = 0; skipp < 12; skipp++){// to enhance preformanse since movment in one timestep is so smale that we dont need to draw every timestep.
-			calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
-			//Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position			
+			//calculateNextPos2(particles, fboPos, fboOldPos, fboVel, fboOldVel, squareModel, velocityEulerShader, pass, PositionEulerShader);
+			Euler(particles, particle_old, velocity, velocity_old, staticParticles); // calculate the cloths next position			
 		}
-		end = std::chrono::high_resolution_clock::now();
+		/*end = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double> elapsed_seconds = end - start;
-		unsigned __int64 Iefter;
-		Iefter = __rdtsc();
-
-		//std::cout << elapsed_seconds.count() << " seconds"<< std::endl;
-
-		int width, height;
-
-		//set up viewport
-		glfwGetFramebufferSize(window, &width, &height);
-		float ratio = width / (float)height;
-		glViewport(0, 0, width, height);
+		std::cout << elapsed_seconds.count() << " seconds"<< std::endl;*/
 
 		//draw here
-		drawTriangles(particles, phongShader, RenderShader);
-
-		// Swap buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		drawTriangles(particles, phongShader, RenderShader, window);
 
 	}
 
@@ -259,7 +220,13 @@ static void error_callback (int error, const char* description) {
 }
 
 // Function for drawing the cloth
-void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint RenderShader) {
+void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint RenderShader, GLFWwindow* window) {
+
+	//set up viewport
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	float ratio = width / (float)height;
+	glViewport(0, 0, width, height);
 
 	glUseProgram(RenderShader);
 	useFBO(0L, 0L, 0L);
@@ -406,6 +373,10 @@ void drawTriangles(vector<glm::vec3> particles, Shader phongShader, GLuint Rende
 	glDisableVertexAttribArray(attribute_v_color);
 	glDeleteBuffers(1, &ibo_cloth_elements);
 	
+
+	// Swap buffers
+	glfwSwapBuffers(window);
+	glfwPollEvents();
 }
 
 //	Check if either left or right mousebuttons are pressed down

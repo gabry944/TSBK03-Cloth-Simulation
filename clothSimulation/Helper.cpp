@@ -303,9 +303,6 @@ static int lasth = 0;
 void useFBO(FBOstruct *out, FBOstruct *in1, FBOstruct *in2)
 {
 	GLint curfbo;
-	/*GLint velocityPosition, positionPosition;
-	velocityPosition = glGetUniformLocation(GL_CURRENT_PROGRAM, "VelocityOld");
-	positionPosition = glGetUniformLocation(GL_CURRENT_PROGRAM, "PositionOld");*/
 
 	// This was supposed to catch changes in viewport size and update lastw/lasth.
 	// It worked for me in the past, but now it causes problems to I have to
@@ -351,13 +348,8 @@ void useFBO(FBOstruct *out, FBOstruct *in1, FBOstruct *in2)
 		glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
 	if (in1 != 0L){
-		//fprintf(stderr, "\n GL_CURRENT_PROGRAM är : %d \n", GL_CURRENT_PROGRAM);
-		//fprintf(stderr, " velocityPosition är : %d \n", velocityPosition);
-		//velocityPosition = glGetUniformLocation(19, "VelocityOld");
-		//fprintf(stderr, " velocityPosition är : %d \n", velocityPosition);
 		//glUniform1i(velocityPosition, 0); // det är defalt till 0 :)
 		glBindTexture(GL_TEXTURE_2D, in1->texid);
-		//fprintf(stderr, "\n tex1(velocity) binded id: %d \n", in1->texid);
 	}
 	else
 		glBindTexture(GL_TEXTURE_2D, 0);
