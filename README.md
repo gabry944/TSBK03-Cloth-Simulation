@@ -1,9 +1,2 @@
-# Cloth-Simulation
 
-A cloth simulation in C++ and OpenGL based on a mathematical model of cloth based on a mass spring system. The mathematical model uses Newton's second law and Euler's method to calculate the position of each mass. Project in the course TNM085 - Modelling Project at Linköping University.
-
-## Requierments
-The project depends on
-* GLEW
-* GLFW 
-* GLM 
+I kursen TNM085 gjordes ett projekt med en tygsimulering. Projectet kan ses här: https://github.com/Isafo/Cloth-Simulation. Detta projektet är en fortsättning av det projektet och kommer endast att rikta in sig på fallet då tyget faller fritt med två fasta punkter. Tanken är att göra de fysikaliska beräkningarna snabbare genom att uföra dem på GPUn istället för på CPUn.
